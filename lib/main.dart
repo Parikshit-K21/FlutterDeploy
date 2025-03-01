@@ -1,4 +1,5 @@
-import 'package:bw_sparsh/forget1.dart';
+import 'package:bw_sparsh/Login/forgetpass.dart';
+import 'package:bw_sparsh/Login/login1.dart';
 import 'package:bw_sparsh/tab.dart';
 import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
@@ -23,7 +24,8 @@ class SparshApp extends ConsumerWidget {
     final themeMode = ref.watch(sparsh.themeModeProvider);
     
     // Set theme based on theme mode
-    final currentTheme = themeMode == ThemeMode.dark 
+    // ignore: unrelated_type_equality_checks
+    final currentTheme = (themeMode == ThemeMode.dark) 
         ? ref.read(sparsh.darkThemeProvider) 
         : appTheme;
     
@@ -34,7 +36,8 @@ class SparshApp extends ConsumerWidget {
       home: const ResponsiveWrapper(
         child: //NotificationsScreen(),
               //NavigationScreen(),
-              ForgotPasswordScreen()
+              //ForgotPasswordScreen(),
+                MyLogin()
       ),
     );
   }
