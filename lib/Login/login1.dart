@@ -3,6 +3,7 @@ import 'package:bw_sparsh/list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'footer.dart';
 import 'login_otp.dart';
 import '../secure_storage.dart';
 
@@ -136,7 +137,7 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
-                flex: 2,
+                flex: 4,
                 child: SlideTransition(
                   position: _animation2,
                   child: Column(
@@ -164,16 +165,23 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                 ),
               ),
               Flexible(
-                flex: 4,
+                flex: 7,
                 child: SlideTransition(
                   position: _animation,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    decoration: const BoxDecoration(
+                        horizontal: 20, vertical: 20),  // Updated padding
+                    decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                      boxShadow: [  // Added shadow
+                        BoxShadow(
+                          color: Colors.grey.shade300,
+                          blurRadius: 4,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -181,7 +189,7 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                         const Text(
                           'Log In',
                           style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 18,  // Updated font size
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
                         ),
@@ -282,7 +290,16 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                   ),
                 ),
               ),
+              Footer(
+              text: "© 2025 SPARSH. All rights reserved.",
+              backgroundColor: Colors.white,
+              textStyle: TextStyle(
+                fontSize: 14,
+                color: Colors.black54,
+                // fontWeight: 
+              ),),
             ],
+            
           ),
         ],
       ),

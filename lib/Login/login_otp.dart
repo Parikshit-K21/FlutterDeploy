@@ -1,4 +1,5 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
+import 'package:bw_sparsh/Login/login1.dart';
 import 'package:bw_sparsh/list.dart';
 import 'package:flutter/material.dart';
 
@@ -13,62 +14,12 @@ class _LoginWithOtpState extends State<LoginWithOtp>
     with SingleTickerProviderStateMixin {
   TextEditingController mobileController = TextEditingController();
   TextEditingController otpController = TextEditingController();
-  late AnimationController _animationController;
-  late Animation<Offset> _animation;
-    late Animation<Offset> _animation2;
 
-late Animation<double> _fadeAnimation;
 
-void _setupAnimations() {
-  _animationController = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 600),
-  );
-  
-  // Slide animation
-  _animation = Tween<Offset>(
-    begin: const Offset(0, 1),
-    end: Offset.zero,
-  ).animate(CurvedAnimation(
-    parent: _animationController,
-    curve: Curves.easeOut,
-  ));
-  
-  // Slide animation for top content
-  _animation2 = Tween<Offset>(
-    begin: const Offset(0, -1),
-    end: Offset.zero,
-  ).animate(CurvedAnimation(
-    parent: _animationController,
-    curve: Curves.easeOut,
-  ));
-  
-  // Add fade animation
-  _fadeAnimation = Tween<double>(
-    begin: 0.0,
-    end: 1.0,
-  ).animate(CurvedAnimation(
-    parent: _animationController,
-    curve: Curves.easeIn,
-  ));
-  
-  _animationController.forward();
-}
+
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-    _animation = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
-    _animationController.forward();
   }
 
   @override
@@ -87,10 +38,8 @@ void _setupAnimations() {
             children: [
             Flexible(
             flex: 2,
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _animation2,
+            
+              
                 child: Column(
                     children: [
                       const SizedBox(height: 20),
@@ -113,15 +62,11 @@ void _setupAnimations() {
                       ),
                     ]
                   ),
-                ),
-            ),
+               
+            
               ),
               Flexible(
                   flex: 4,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _animation,
                       child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
@@ -163,15 +108,7 @@ void _setupAnimations() {
                             ),
                           ),
                         ),
-                        // const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {},
-                            child: const Text("Sent OTP",
-                                style: TextStyle(color: Colors.blue)),
-                          ),
-                        ),
+
                         const SizedBox(height: 10),
                         TextField(
                           controller: otpController,
@@ -185,6 +122,15 @@ void _setupAnimations() {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {},
+                            child: const Text("Resend OTP",
+                                style: TextStyle(color: Colors.blue)),
                           ),
                         ),
                         const SizedBox(height: 30),
@@ -206,7 +152,7 @@ void _setupAnimations() {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => NotificationsScreen()),
+                                  builder: (context) => MyLogin()),
                             );
                           },
                           style: TextButton.styleFrom(
@@ -234,8 +180,8 @@ void _setupAnimations() {
                     ),
                   ),
                 ),
-              ),
-              ),
+              
+            
             ],
           ),
         ],

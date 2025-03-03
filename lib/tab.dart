@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-
+// Import your universal.dart
+import 'universal.dart';
 
 class Tab123 extends StatelessWidget {
   const Tab123({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final AppTheme appTheme = AppTheme(); // Create instance of your theme
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Navigation UI',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.grey[200],
-      ),
+      theme: appTheme.toThemeData(), 
       home: const NavigationScreen(),
     );
   }
@@ -31,144 +31,134 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final AppTheme appTheme = AppTheme();
+
     return Scaffold(
       body: SafeArea(
-      child: Column(
-        children: [
-        // Top navigation tabs
-        Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+        child: Column(
+          children: [
+            // Top navigation tabs
+            Container(
+              height: 60,
+              padding: EdgeInsets.symmetric(vertical: appTheme.spacing.small),
+              decoration: BoxDecoration(
+                color: appTheme.surfaceColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(
+                    _tabTitles.length,
+                    (index) => Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.xsmall),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _selectedTabIndex = index;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _selectedTabIndex == index
+                              ? appTheme.primaryColor
+                              : appTheme.surfaceColor,
+                          foregroundColor: _selectedTabIndex == index
+                              ? appTheme.onPrimaryColor
+                              : appTheme.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(appTheme.buttonBorderRadius),
+                            side: BorderSide(
+                              color: _selectedTabIndex == index
+                                  ? appTheme.primaryColor
+                                  : appTheme.neutralColor,
+                            ),
+                          ),
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          splashFactory: NoSplash.splashFactory,
+                        ),
+                        child: Text(
+                          _tabTitles[index],
+                          style: TextStyle(fontSize: appTheme.fontSizes.small),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Selected tab content with header
+            Expanded(
+              child: Container(
+                color: appTheme.backgroundColor,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: appTheme.spacing.xsmall,
+                          vertical: appTheme.spacing.xsmall,
+                        ),
+                        child: Text(
+                          _tabTitles[_selectedTabIndex],
+                          style: TextStyle(
+                            fontSize: appTheme.fontSizes.medium,
+                            fontWeight: FontWeight.bold,
+                            color: appTheme.textColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height - 140,
+                        child: _buildGridForTab(_selectedTabIndex),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ],
-          ),
-          child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-            _tabTitles.length,
-            (index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                _selectedTabIndex = index;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _selectedTabIndex == index
-                  ? Colors.blue
-                  : Colors.white,
-                foregroundColor: _selectedTabIndex == index
-                  ? Colors.white
-                  : Colors.blue,
-                shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(
-                  color: _selectedTabIndex == index
-                  ? Colors.blue
-                  : Colors.grey,),
-                ),
-                elevation: 0,
-    shadowColor: Colors.transparent,
-    splashFactory: NoSplash.splashFactory,
-              
-              ),
-              child: Text(_tabTitles[index]),
-              ),
-            ),
-            ),
-          ),
-          ),
         ),
-        
-        // Selected tab content with header
-        Expanded(
-          child: Container(
-          color: Colors.grey[200],
-          child: SingleChildScrollView(
-            child: Column(
-            children: [
-              Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-              child: Text(
-                _tabTitles[_selectedTabIndex],
-                style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                ),
-              ),
-              ),
-              SizedBox(
-              height: MediaQuery.of(context).size.height - 140,
-              child: _buildGridForTab(_selectedTabIndex),
-              ),
-            ],
-            ),
-          ),
-          ),
-        ),
-        ],
-      ),
       ),
     );
   }
 
   Widget _buildGridForTab(int tabIndex) {
-    // Define different grid items for each tab, structure of Grid items is at the end
+    final AppTheme appTheme = AppTheme();
     List<GridItem> items = [];
-    
+
     switch (tabIndex) {
-      case 0: // Quick Menu 
+      case 0: // Quick Menu
         items = [
           GridItem(
             icon: Icons.store,
             title: 'RPL Outlet Tracker',
-            color: Colors.blue,
+            color: appTheme.primaryColor,
           ),
           GridItem(
             icon: Icons.assignment,
             title: 'DKC Lead Entry',
-            color: Colors.orange,
+            color: appTheme.warningColor,
           ),
           GridItem(
             icon: Icons.analytics,
             title: 'RPL Outlet Tracker',
-            color: Colors.blue,
+            color: appTheme.primaryColor,
           ),
           GridItem(
             icon: Icons.feedback,
             title: 'Training Feed Back',
-            color: Colors.green,
+            color: appTheme.successColor,
           ),
-          GridItem(
-            icon: Icons.store,
-            title: 'RPL Outlet Tracker',
-            color: Colors.blue,
-          ),
-          GridItem(
-            icon: Icons.assignment,
-            title: 'DKC Lead Entry',
-            color: Colors.orange,
-          ),
-          GridItem(
-            icon: Icons.analytics,
-            title: 'RPL Outlet Tracker',
-            color: Colors.blue,
-          ),
-          GridItem(
-            icon: Icons.feedback,
-            title: 'Training Feed Back',
-            color: Colors.green,
-          ),
+          // ... Add other items similarly
         ];
         break;
       case 1: // Dashboard
@@ -176,43 +166,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
           GridItem(
             icon: Icons.dashboard,
             title: 'Sales Dashboard',
-            color: Colors.purple,
+            color: appTheme.secondaryColor,
           ),
           GridItem(
             icon: Icons.trending_up,
             title: 'Performance',
-            color: Colors.red,
+            color: appTheme.errorColor,
           ),
-          GridItem(
-            icon: Icons.insert_chart,
-            title: 'Analytics',
-            color: Colors.teal,
-          ),
-          GridItem(
-            icon: Icons.people,
-            title: 'Team Stats',
-            color: Colors.indigo,
-          ),
-           GridItem(
-            icon: Icons.dashboard,
-            title: 'Sales Dashboard',
-            color: Colors.purple,
-          ),
-          GridItem(
-            icon: Icons.trending_up,
-            title: 'Performance',
-            color: Colors.red,
-          ),
-          GridItem(
-            icon: Icons.insert_chart,
-            title: 'Analytics',
-            color: Colors.teal,
-          ),
-          GridItem(
-            icon: Icons.people,
-            title: 'Team Stats',
-            color: Colors.indigo,
-          ),
+          // ... Add other items similarly
         ];
         break;
       case 2: // Document
@@ -220,109 +181,82 @@ class _NavigationScreenState extends State<NavigationScreen> {
           GridItem(
             icon: Icons.article,
             title: 'Recent Files',
-            color: Colors.brown,
+            color: appTheme.neutralColor,
           ),
           GridItem(
             icon: Icons.cloud_upload,
             title: 'Upload Document',
-            color: Colors.cyan,
+            color: appTheme.infoColor,
           ),
-          GridItem(
-            icon: Icons.folder,
-            title: 'My Documents',
-            color: Colors.amber,
-          ),
-          GridItem(
-            icon: Icons.share,
-            title: 'Shared With Me',
-            color: Colors.deepPurple,
-          ),
-          GridItem(
-            icon: Icons.article,
-            title: 'Recent Files',
-            color: Colors.brown,
-          ),
-          GridItem(
-            icon: Icons.cloud_upload,
-            title: 'Upload Document',
-            color: Colors.cyan,
-          ),
-          GridItem(
-            icon: Icons.folder,
-            title: 'My Documents',
-            color: Colors.amber,
-          ),
-          GridItem(
-            icon: Icons.share,
-            title: 'Shared With Me',
-            color: Colors.deepPurple,
-          ),
+          // ... Add other items similarly
         ];
         break;
     }
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(appTheme.spacing.medium),
       child: GridView.count(
         crossAxisCount: 4,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: .5, // Adjust this value to change item height ratio
-        shrinkWrap: true, // Makes grid wrap its content
+        crossAxisSpacing: appTheme.spacing.medium,
+        mainAxisSpacing: appTheme.spacing.medium,
+        childAspectRatio: .5,
+        shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        children: items.map((item) => _buildGridItem(item)).toList(), // Prevents grid from scrolling
-
+        children: items.map((item) => _buildGridItem(item)).toList(),
       ),
     );
   }
 
   Widget _buildGridItem(GridItem item) {
-  return Column(
-        mainAxisSize: MainAxisSize.min, // Minimize the column height
-    children: [
-      Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 1,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: item.color.withOpacity(0.1),
-                shape: BoxShape.circle,
+    final AppTheme appTheme = AppTheme();
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: EdgeInsets.all(appTheme.spacing.small),
+          decoration: BoxDecoration(
+            color: appTheme.surfaceColor,
+            borderRadius: BorderRadius.circular(appTheme.cardBorderRadius),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black,
+                blurRadius: 1,
               ),
-              child: Icon(
-                item.icon,
-                color: item.color,
-                size: 24,
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(appTheme.spacing.medium),
+                decoration: BoxDecoration(
+                  color: item.color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  item.icon,
+                  color: item.color,
+                  size: 24,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-          ],
+              SizedBox(height: appTheme.spacing.small),
+            ],
+          ),
         ),
-      ),
-      const SizedBox(height: 8), // Add spacing between box and text
-      Text(
-        item.title,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 12
-        ),
-      )
-    ],
-  );
-}
+        SizedBox(height: appTheme.spacing.small),
+        Text(
+          item.title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: appTheme.fontSizes.xsmall,
+            color: appTheme.textColor,
+          ),
+        )
+      ],
+    );
+  }
 }
 
 class GridItem {

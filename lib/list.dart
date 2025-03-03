@@ -1,3 +1,4 @@
+import 'package:bw_sparsh/Login/login_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'universal.dart'; // Import the theme configuration
@@ -105,8 +106,10 @@ class NotificationsScreen extends ConsumerWidget {
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: appTheme.onPrimaryColor),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+           onPressed: (){}// => Navigator.push(context, MaterialPageRoute(
+          //                       builder: (context) => const LoginWithOtp()
+          // ))
+                  ),
       ),
       body: SafeArea(
         child: Container(
