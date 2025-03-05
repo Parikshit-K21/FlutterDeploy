@@ -1,13 +1,21 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
-import 'package:bw_sparsh/tab.dart';
+import 'package:bw_sparsh/home_tabs.dart';
+import 'package:bw_sparsh/sales_order.dart';
 import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'list.dart';
+import 'Notifications.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Preload the font
+  await GoogleFonts.pendingFonts([
+    GoogleFonts.pridi(), // Replace 'unna' with your font name
+  ]);
   runApp(
     const ProviderScope(
       child: SparshApp(),
@@ -37,8 +45,8 @@ class SparshApp extends ConsumerWidget {
         child: //NotificationsScreen(),
               //NavigationScreen(),
               //ForgotPasswordScreen(),
-                MyLogin()
-
+                //MyLogin()
+              OrderSaleScreen()
       ),
     );
   }
@@ -52,33 +60,13 @@ class ResponsiveWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
-    EdgeInsets padding;
-    
-    if (screenSize.width > 1200) {
-      // Extra large screens
-      padding = const EdgeInsets.symmetric(horizontal: 80.0);
-    } else if (screenSize.width > 992) {
-      // Desktop screens
-      padding = const EdgeInsets.symmetric(horizontal: 64.0);
-    } else if (screenSize.width > 768) {
-      // Tablet screens
-      padding = const EdgeInsets.symmetric(horizontal: 32.0);
-    } else if (screenSize.width > 480) {
-      // Large mobile screens
-      padding = const EdgeInsets.symmetric(horizontal: 16.0);
-    } else {
-      // Small mobile screens
-      padding = const EdgeInsets.symmetric(horizontal: 8.0);
-    }
-    
+   
     return MediaQuery(
       // Override text scaling to ensure consistent text size
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(1.0),
       ),
       child: Container(
-        padding: padding,
         child: child,
       ),
     );

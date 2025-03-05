@@ -1,4 +1,4 @@
-import 'package:bw_sparsh/list.dart';
+import 'package:bw_sparsh/Notifications.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 

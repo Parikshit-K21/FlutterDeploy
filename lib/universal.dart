@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// FontSizes class to maintain consistent font sizes across the app
 class FontSizes {
@@ -31,9 +32,19 @@ class Spacing {
   const Spacing({
     this.xsmall = 4,
     this.small = 8,
-    this.medium = 16,
-    this.large = 24,
-    this.xlarge = 32,
+    this.medium = 12,
+    this.large = 16,
+    this.xlarge = 20,
+  });
+}
+class BordRadius{
+final double small;
+  final double medium;
+  final double large;
+const BordRadius({
+    this.small = 5,
+    this.medium = 10,
+    this.large = 15,
   });
 }
 
@@ -88,6 +99,8 @@ class AppTheme {
   // Font family
   final String? fontFamily;
 
+  final BordRadius radius;
+
   const AppTheme({
     // Default primary blue color as shown in the example
     this.primaryColor = const Color(0xFF0277BD),
@@ -136,8 +149,12 @@ class AppTheme {
     this.dialogElevation = 24.0,
     
     // Font family
-    this.fontFamily = 'Roboto',
+    this.fontFamily = 'Pridi',
+    
+    // Radius
+    this.radius = const BordRadius(),
   });
+
 
   // Method to create a copy of the current theme with some properties changed
   AppTheme copyWith({
@@ -210,7 +227,7 @@ class AppTheme {
       primaryColor: primaryColor,
       scaffoldBackgroundColor: backgroundColor,
       cardColor: cardColor,
-      fontFamily: fontFamily,
+      fontFamily: GoogleFonts.getFont(fontFamily!).fontFamily,
       colorScheme: ColorScheme(
         primary: primaryColor,
         primaryContainer: primaryDarkColor,

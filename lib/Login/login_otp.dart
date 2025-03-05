@@ -1,7 +1,10 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
-import 'package:bw_sparsh/list.dart';
+import 'package:bw_sparsh/Notifications.dart';
 import 'package:flutter/material.dart';
+
+import '../APIcaller/LoginApi.dart';
+import 'footer.dart';
 
 class LoginWithOtp extends StatefulWidget {
   const LoginWithOtp({super.key});
@@ -14,8 +17,7 @@ class _LoginWithOtpState extends State<LoginWithOtp>
     with SingleTickerProviderStateMixin {
   TextEditingController mobileController = TextEditingController();
   TextEditingController otpController = TextEditingController();
-
-
+  final service = LoginService();
 
   @override
   void initState() {
@@ -37,7 +39,7 @@ class _LoginWithOtpState extends State<LoginWithOtp>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
             Flexible(
-            flex: 2,
+            flex: 4,
             
               
                 child: Column(
@@ -66,33 +68,28 @@ class _LoginWithOtpState extends State<LoginWithOtp>
             
               ),
               Flexible(
-                  flex: 4,
+                  flex: 7,
                       child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
+                        horizontal: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(40)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade300,
-                          blurRadius: 4,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                          const BorderRadius.vertical(top: Radius.circular(20)),
+                      
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
+                        Padding(padding: EdgeInsets.all(10),
+                        child:  Text(
                           'Log In Mobile No.',
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
-                        ),
+                        ),),
                         const SizedBox(height: 20),
                         TextField(
                           controller: mobileController,
@@ -141,7 +138,9 @@ class _LoginWithOtpState extends State<LoginWithOtp>
                             padding: const EdgeInsets.symmetric(
                                 vertical: 12, horizontal: 50),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            
+                          },
                           child: const Text("Verify Now",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18)),
@@ -176,12 +175,20 @@ class _LoginWithOtpState extends State<LoginWithOtp>
                             ],
                           ),
                         ),
+
+                        Spacer(),
+                         Footer(
+                            text: "Developed By Birla White IT",
+                            backgroundColor: Colors.white,
+                            textStyle: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            ),),
                       ],
                     ),
                   ),
                 ),
-              
-            
             ],
           ),
         ],

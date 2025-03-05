@@ -1,8 +1,10 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
-import 'package:bw_sparsh/list.dart';
+import 'package:bw_sparsh/Notifications.dart';
+import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../APIcaller/LoginApi.dart';
 import 'footer.dart';
 import 'login_otp.dart';
 import '../secure_storage.dart';
@@ -45,13 +47,18 @@ class MyLogin extends ConsumerStatefulWidget {
   ConsumerState<MyLogin> createState() => _MyLoginState();
 }
 
-class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStateMixin {
+class _MyLoginState extends ConsumerState<MyLogin> with TickerProviderStateMixin {
   late AnimationController _animationController;
+    late AnimationController _animationController2;
+  final service=LoginService();
   late Animation<Offset> _animation;
+
   late Animation<Offset> _animation2;
   
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+
 
   @override
   void initState() {
@@ -64,6 +71,10 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
+    );
+    _animationController2 = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
     );
     
     _animation = Tween<Offset>(
@@ -101,13 +112,30 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
   }
 
   void _login() async {
-    final result = await ref.read(loginProvider(context).future);
-    
-    if (result && mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+    try {
+      final email = ref.read(emailProvider);
+      final password = ref.read(passwordProvider);
+      
+      final response = await service.loginWithEmailAndPassword(
+        email: email,
+        password: password
       );
+      
+      if (response.runtimeType==UserLogin && mounted) {
+        // Store credentials if remember me is checked
+        if (ref.read(rememberMeProvider)) {
+          final secureStorage = ref.read(secureStorageProvider);
+          await secureStorage.saveData('email', email);
+          await secureStorage.saveData('password', password);
+        }
+        
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+        );
+      } 
+    } catch (e) {
+      ref.read(errorMessageProvider.notifier).state = "An error occurred during login";
     }
   }
 
@@ -171,28 +199,23 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),  // Updated padding
+                        horizontal: 20),  // Updated padding
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-                      boxShadow: [  // Added shadow
-                        BoxShadow(
-                          color: Colors.grey.shade300,
-                          blurRadius: 4,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
+                        Padding(padding: EdgeInsets.all(6),
+                        child:  Text(
                           'Log In',
                           style: TextStyle(
                               fontSize: 18,  // Updated font size
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
-                        ),
+                        ),),
                         const SizedBox(height: 20),
                         if (errorMessage != null)
                           Text(
@@ -231,9 +254,18 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                           onChanged: (value) => ref.read(passwordProvider.notifier).state = value,
                         ),
                         const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,                          children: [
+                               Checkbox(
+                                value: rememberMe,
+                                onChanged: (value) {
+                                  ref.read(rememberMeProvider.notifier).state = value ?? false;
+                                },
+                            ),
+                            const Text("Remember Me",
+                                style: TextStyle(color: Colors. black)),
+                                Spacer(),
+                                 TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -244,22 +276,8 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                             child: const Text("Forgot Password?",
                                 style: TextStyle(color: Colors.blue)),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Checkbox(
-                                value: rememberMe,
-                                onChanged: (value) {
-                                  ref.read(rememberMeProvider.notifier).state = value ?? false;
-                                },
-                              ),
-                            ),
-                            const Text("Remember Me",
-                                style: TextStyle(color: Colors.black)),
                           ],
+
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
@@ -282,22 +300,24 @@ class _MyLoginState extends ConsumerState<MyLogin> with SingleTickerProviderStat
                                   builder: (context) => const LoginWithOtp()),
                             );
                           },
-                          child: const Text("Log in With Otp",
+                          child: const Text("Log in With OTP",
                               style: TextStyle(color: Colors.blue, fontSize: 18)),
                         ),
+                        Spacer(),
+                         Footer(
+                            text: "Developed By Birla White IT",
+                            backgroundColor: Colors.white,
+                            textStyle: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            ),),
                       ],
                     ),
                   ),
                 ),
               ),
-              Footer(
-              text: "© 2025 SPARSH. All rights reserved.",
-              backgroundColor: Colors.white,
-              textStyle: TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-                // fontWeight: 
-              ),),
+               
             ],
             
           ),
