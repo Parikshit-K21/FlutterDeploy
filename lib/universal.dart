@@ -149,7 +149,7 @@ class AppTheme {
     this.dialogElevation = 24.0,
     
     // Font family
-    this.fontFamily = 'Pridi',
+    this.fontFamily = 'Poppins',
     
     // Radius
     this.radius = const BordRadius(),

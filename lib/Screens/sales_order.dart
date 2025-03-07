@@ -2,8 +2,8 @@ import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:convert';
-import 'color.dart';
-import 'universal.dart';
+import '../statusColor.dart';
+import '../universal.dart';
 
 
 final orderDetailsProvider = StateProvider<String>((ref) => '''

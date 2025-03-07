@@ -2,30 +2,16 @@ import 'package:flutter/material.dart';
 // Import your universal.dart
 import 'universal.dart';
 
-class Tab123 extends StatelessWidget {
-  const Tab123({Key? key}) : super(key: key);
+
+
+class HomeTabs extends StatefulWidget {
+  const HomeTabs({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final AppTheme appTheme = AppTheme(); // Create instance of your theme
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Navigation UI',
-      theme: appTheme.toThemeData(), 
-      home: const NavigationScreen(),
-    );
-  }
+  State<HomeTabs> createState() => _HomeTabsState();
 }
 
-class NavigationScreen extends StatefulWidget {
-  const NavigationScreen({Key? key}) : super(key: key);
-
-  @override
-  State<NavigationScreen> createState() => _NavigationScreenState();
-}
-
-class _NavigationScreenState extends State<NavigationScreen> {
+class _HomeTabsState extends State<HomeTabs> {
   int _selectedTabIndex = 0;
   final List<String> _tabTitles = ['Quick Menu', 'Dashboard', 'Document', 'Trending'];
 
@@ -33,100 +19,100 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Widget build(BuildContext context) {
     final AppTheme appTheme = AppTheme();
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top navigation tabs
-            Container(
-              height: 60,
-              padding: EdgeInsets.symmetric(vertical: appTheme.spacing.small),
-              decoration: BoxDecoration(
-                color: appTheme.surfaceColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(
-                    _tabTitles.length,
-                    (index) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.xsmall),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedTabIndex = index;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: _selectedTabIndex == index
-                              ? appTheme.primaryColor
-                              : appTheme.surfaceColor,
-                          foregroundColor: _selectedTabIndex == index
-                              ? appTheme.onPrimaryColor
-                              : appTheme.primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(appTheme.buttonBorderRadius),
-                            side: BorderSide(
-                              color: _selectedTabIndex == index
-                                  ? appTheme.primaryColor
-                                  : appTheme.neutralColor,
-                            ),
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min, // Set mainAxisSize to min
+        children: [
+          // Top navigation tabs
+          Container(
+            height: 60,
+            padding: EdgeInsets.symmetric(vertical: appTheme.spacing.small),
+            decoration: BoxDecoration(
+              color: appTheme.surfaceColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: List.generate(
+                  _tabTitles.length,
+                  (index) => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.xsmall),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTabIndex = index;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedTabIndex == index
+                            ? appTheme.primaryColor
+                            : appTheme.surfaceColor,
+                        foregroundColor: _selectedTabIndex == index
+                            ? appTheme.onPrimaryColor
+                            : appTheme.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(appTheme.buttonBorderRadius),
+                          side: BorderSide(
+                            color: _selectedTabIndex == index
+                                ? appTheme.primaryColor
+                                : appTheme.neutralColor,
                           ),
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          splashFactory: NoSplash.splashFactory,
                         ),
-                        child: Text(
-                          _tabTitles[index],
-                          style: TextStyle(fontSize: appTheme.fontSizes.small),
-                        ),
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory,
+                      ),
+                      child: Text(
+                        _tabTitles[index],
+                        style: TextStyle(fontSize: appTheme.fontSizes.small),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
+          ),
 
-            // Selected tab content with header
-            Expanded(
-              child: Container(
-                color: appTheme.backgroundColor,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: appTheme.spacing.xsmall,
-                          vertical: appTheme.spacing.xsmall,
-                        ),
-                        child: Text(
-                          _tabTitles[_selectedTabIndex],
-                          style: TextStyle(
-                            fontSize: appTheme.fontSizes.medium,
-                            fontWeight: FontWeight.bold,
-                            color: appTheme.textColor,
-                          ),
+          // Selected tab content with header
+          Flexible(
+            fit: FlexFit.loose, // Use Flexible with FlexFit.loose
+            child: Container(
+              color: appTheme.backgroundColor,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: appTheme.spacing.xsmall,
+                        vertical: appTheme.spacing.xsmall,
+                      ),
+                      child: Text(
+                        _tabTitles[_selectedTabIndex],
+                        style: TextStyle(
+                          fontSize: appTheme.fontSizes.medium,
+                          fontWeight: FontWeight.bold,
+                          color: appTheme.textColor,
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height - 140,
-                        child: _buildGridForTab(_selectedTabIndex),
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height - 140,
+                      child: _buildGridForTab(_selectedTabIndex),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

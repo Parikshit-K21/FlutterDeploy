@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'Modals/LoginM.dart';
+
 class ApiException implements Exception {
   final String message;
   final int? statusCode;
@@ -22,36 +24,7 @@ class NetworkException implements Exception {
   String toString() => 'NetworkException: $message';
 }
 
-class UserLogin {
-  final int? loginId;
-  final String? password;
-  final DateTime? createDateTime;
-  final String? isActive;
-  final String? emailAddress;
-  final String? mobileNumber;
 
-  UserLogin({
-    this.loginId,
-    this.password,
-    this.createDateTime,
-    this.isActive,
-    this.emailAddress,
-    this.mobileNumber,
-  });
-
-  factory UserLogin.fromJson(Map<String, dynamic> json) {
-    return UserLogin(
-      loginId: json['loginId'],
-      password: json['password'],
-      createDateTime: json['createDateTime'] != null 
-          ? DateTime.parse(json['createDateTime']) 
-          : null,
-      isActive: json['isActive'],
-      emailAddress: json['emailAddress'],
-      mobileNumber: json['mobileNumber'],
-    );
-  }
-}
 
 
 class LoginService {
@@ -93,10 +66,14 @@ class LoginService {
     try {
       final response = await client.post(
         uri,
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
         body: json.encode({
-          'emailAdd': email,
-          'passwrdM': password,
+          'email': email,
+          'password': password,
         }),
       ).timeout(timeout, onTimeout: () {
         throw NetworkException('Request timed out');
@@ -109,7 +86,7 @@ class LoginService {
         case 400:
           throw ApiException('Invalid request', statusCode: 400);
         case 401:
-          throw ApiException('Invalid credentials', statusCode: 401);
+          throw ApiException('Invalid credentials OR InActive Account', statusCode: 401);
         case 500:
           throw ApiException('Server error', statusCode: 500);
         default:
@@ -215,12 +192,12 @@ class LoginService {
 
   // Login with user ID and password
   Future<UserLogin> loginWithUserIdAndPassword({
-    required int userId,
+    required String userId,
     required String password,
     Duration timeout = const Duration(seconds: 30),
   }) async {
     // Input validation
-    if (userId <= 0) {
+    if (userId.isEmpty) {
       throw ApiException('Invalid user ID');
     }
     if (password.isEmpty) {
@@ -255,10 +232,10 @@ class LoginService {
 
   // Get user by ID
   Future<UserLogin?> getUserById(
-    int userId, {
+    String userId, {
     Duration timeout = const Duration(seconds: 30),
   }) async {
-    if (userId <= 0) {
+    if (userId.isEmpty) {
       throw ApiException('Invalid user ID');
     }
 

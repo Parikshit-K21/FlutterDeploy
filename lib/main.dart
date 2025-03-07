@@ -1,20 +1,22 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
+import 'package:bw_sparsh/homePage.dart';
 import 'package:bw_sparsh/home_tabs.dart';
-import 'package:bw_sparsh/sales_order.dart';
+import 'package:bw_sparsh/Screens/sales_order.dart';
+import 'package:bw_sparsh/try.dart';
 import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'Notifications.dart';
+import 'Screens/Notifications.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   
   // Preload the font
   await GoogleFonts.pendingFonts([
-    GoogleFonts.pridi(), // Replace 'unna' with your font name
+    GoogleFonts.poppins(), // Replace 'unna' with your font name
   ]);
   runApp(
     const ProviderScope(
@@ -41,12 +43,14 @@ class SparshApp extends ConsumerWidget {
       title: 'SPARSH',
       debugShowCheckedModeBanner: false,
       theme: currentTheme.toThemeData(),
-      home: const ResponsiveWrapper(
-        child: //NotificationsScreen(),
-              //NavigationScreen(),
+      home: ResponsiveWrapper(
+        child:// NotificationsScreen(),
+              //HomeTabs(),
               //ForgotPasswordScreen(),
-                //MyLogin()
-              OrderSaleScreen()
+                MyLogin()
+              //OrderSaleScreen()
+              //Try()
+              
       ),
     );
   }

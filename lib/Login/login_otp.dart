@@ -1,6 +1,6 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
-import 'package:bw_sparsh/Notifications.dart';
+import 'package:bw_sparsh/Screens/Notifications.dart';
 import 'package:flutter/material.dart';
 
 import '../APIcaller/LoginApi.dart';

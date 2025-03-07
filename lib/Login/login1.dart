@@ -1,13 +1,15 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
-import 'package:bw_sparsh/Notifications.dart';
+import 'package:bw_sparsh/Screens/Notifications.dart';
 import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../APIcaller/LoginApi.dart';
+import '../APIcaller/Modals/LoginM.dart';
+import '../homePage.dart';
 import 'footer.dart';
 import 'login_otp.dart';
-import '../secure_storage.dart';
+import 'secure_storage.dart';
 
 // State providers
 final emailProvider = StateProvider<String>((ref) => '');
@@ -131,7 +133,7 @@ class _MyLoginState extends ConsumerState<MyLogin> with TickerProviderStateMixin
         
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+          MaterialPageRoute(builder: (context) =>  HomeBase(isMobile: true,)),
         );
       } 
     } catch (e) {
