@@ -36,6 +36,9 @@ class RetailerRegistrationPage2 extends StatefulWidget {
 
 class _RetailerRegistrationPageState extends State<RetailerRegistrationPage2> {
   final _formKey = GlobalKey<FormState>();
+ String? _areasCode;
+  List<String>? _areas;
+List<String>? _states;
 
    String? _selectedOption;
 
@@ -56,7 +59,62 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage2> {
     TextEditingController Scheme= TextEditingController();
 
     ApiService api= ApiService();
-    
+
+    Future<void> _loadArea(String state) async {
+    try {
+      print(state);
+            print(state.runtimeType);
+
+      final data = await api.getAreas(state);
+      print(data);
+      setState(() {
+        _areas = data;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+    }
+  }
+  Future<void> _loadStates() async {
+    try {
+      final data = await api.getStates();
+            print(data);
+      setState(() {
+        _states = data;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+    }
+  }
+
+    Future<void> areaCodes(String area) async {
+    try {
+      final data = await api.getAreaCode(area);
+            print(data);
+      setState(() {
+        _areasCode = data;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+    }
+  }
+
+  Future<String> retailCodes(String cat) async {
+  final categoryMap = {
+    'Urban': 'URB',
+    'Rural': 'RUR',
+    'Direct': 'DDR'
+  };
+  
+  return categoryMap[cat] ?? '';
+
+
+  
+}
+ @override
+  void initState() {
+    super.initState();
+    _loadStates();
+  }
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -182,9 +240,14 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage2> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
 
+
+
+                            //all functions
+
+                            areaCodes(District.text);
                             String year = (DateTime.now().year % 100).toString();//current year in 2 digits
 
-                            String doc = await generateDocuNumb(year, District.text, retailCat.text);  //generate the doc numb
+                            String doc = await generateDocuNumb(year, _areasCode!,  await retailCodes(retailCat.text));  //generate the doc numb
 
                             DateTime time=DateTime.now();
                             try{
@@ -196,6 +259,10 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage2> {
                             }catch(e){
                               print(e);
                             }
+
+
+
+
                            Navigator.push( context,
                           MaterialPageRoute(
                                   builder: (context) =>  SearchTablePage()),
@@ -268,11 +335,12 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage2> {
             Expanded(
               child: _buildDropdownField(
                 label: 'Retailer Category*',
-                items:  ['URB', 'RUR', 'DDR'],
+                items:  ['Urban', 'Rural', 'Direct'],
                 value: retailCat.text,
                 onChanged: (value) {
                   setState(() {
                     retailCat.text = value!;
+                    
                   });
                 },
               ),
@@ -282,30 +350,34 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage2> {
 
         // Second Row with Area and District
         Row(
-          children: [
+            children: [
             Expanded(
               child: _buildDropdownField(
-                label: 'Area*',
-                items: ['Rajistation', 'Maharastra'],
-                value: Area.text,
-                onChanged: (value) {
-                  setState(() {
-                    Area.text = value!;
-                  });
-                },
+              label: 'Area*',
+              items: _states ?? [],
+              value: Area.text,
+              onChanged: (value) {
+                setState(() {
+                Area.text = value!;
+                District.text = ''; // Reset district when area changes
+                _loadArea(value); // Load districts for selected area
+                });
+              },
               ),
             ),
             const SizedBox(width: 16.0),
             Expanded(
               child: _buildDropdownField(
-                label:'District*',
-                items: ['JAI', 'MUM'],
-                value: District.text,
-                onChanged: (value) {
+              label:'District*',
+              items: _areas ?? [], // Use empty list if _areas is null
+              value: District.text,
+              onChanged: (value) { // Handle district selection
+                if (!Area.text.isEmpty && value != null) {
                   setState(() {
-                    District.text = value!;
+                    District.text = value;
                   });
-                },
+                }
+              },
               ),
             ),
           ],
@@ -505,7 +577,7 @@ Widget _buildTextField({
 
   Widget _buildDropdownField({
   required String label,
-  required List<String> items,
+  required List<String?> items,
   required String? value,
   required ValueChanged<String?> onChanged,
 }) {
@@ -515,11 +587,11 @@ Widget _buildTextField({
       Text(label),
       const SizedBox(height: 4),
       DropdownButtonFormField<String>(
-        value: items.contains(value) ? value : items.first, // Ensure valid initial value
+        value: value?.isNotEmpty == true && items.contains(value) ? value : null, // Set to null if value is not in items
         items: items.map((item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item),
+            child: Text(item?? ''),
           );
         }).toList(),
         onChanged: onChanged,

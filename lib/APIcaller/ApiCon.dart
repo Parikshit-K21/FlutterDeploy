@@ -6,7 +6,7 @@ import 'AreaHeir.dart';
 
 
 class ApiService {
-  static const String baseUrl = "http://localhost:5126/api/Control";
+  static const String baseUrl = "http://localhost:5071/api/Control";
 
   Future<List<dynamic>> getAll() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -19,20 +19,7 @@ class ApiService {
   }
 
   
-Future<List<AreaHierarchy>> getAreas() async {
-    final response = await http.get(Uri.parse("$baseUrl/areaLoc"));
 
-    if (response.statusCode == 200) {
-    List<dynamic> jsonData = jsonDecode(response.body);
-    return jsonData.map((data) => AreaHierarchy(
-      areaCode: data['AreaCode'],
-      areaDesc: data['AreaDesc'],
-      districtNames: List<String>.from(data['DistrictNames']),
-    )).toList();
-  } else {
-    throw Exception("Failed to fetch data. Status Code: ${response.statusCode}");
-  }
-  }
 
 
   Future<List> getone(String id) async {
@@ -103,6 +90,51 @@ Future<List<AreaHierarchy>> getAreas() async {
       throw Exception("Failed to fetch distinct values for $columnName");
     }
   }
- 
-}
 
+
+
+
+Future<List<String>> getStates() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/getstates'));
+      if (response.statusCode == 200) {
+        return List<String>.from(jsonDecode(response.body));
+      }
+      throw Exception('Failed to load states');
+    } catch(e) {
+      print(e);
+      throw Exception('Error loading states: $e');
+    }
+  }
+
+
+  Future<List<String>> getAreas(String state) async {
+    final url = '$baseUrl/getdistricts/$state';
+  try {
+   
+    final response = await http.get(Uri.parse(url));  
+    if (response.statusCode == 200) {
+      return List<String>.from(jsonDecode(response.body));
+    }
+    throw Exception('Failed to load Areas: Status code ${response.statusCode}');
+  } catch(e) {
+    throw Exception('Error loading Areas: $e');
+  }
+  }
+
+
+  Future<String> getAreaCode(String area) async {
+     try{
+    final response = await http.get(Uri.parse('$baseUrl/areaCode/{$area}'));
+    if (response.statusCode == 200) {
+       return (jsonDecode(response.body)).toString();
+    }
+    throw Exception('Failed to load areaCOde');
+   } catch(e) {
+      print(e);
+      throw Exception('Error loading areaCode: $e');
+   }
+  }
+
+
+}

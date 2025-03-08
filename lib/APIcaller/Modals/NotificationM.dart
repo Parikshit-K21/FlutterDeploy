@@ -2,6 +2,55 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
+List<NotificationItem> getSampleNotifications() {
+  return [
+    NotificationItem(
+      id: '1',
+      title: 'Order Confirmed',
+      message: 'Your order #12345 has been confirmed and is being processed.',
+      timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+      status: 'confirmed',
+      type: 'order',
+      isRead: false,
+    ),
+    NotificationItem(
+      id: '2',
+      title: 'Payment Successful',
+      message: 'Payment of ₹1,500 has been processed successfully.',
+      timestamp: DateTime.now().subtract(const Duration(days: 1)),
+      status: 'completed',
+      type: 'payment',
+      isRead: true,
+    ),
+    NotificationItem(
+      id: '3',
+      title: 'New Offer Available',
+      message: 'Special 20% discount on all electronics. Limited time offer!',
+      timestamp: DateTime.now().subtract(const Duration(days: 2)),
+      status: 'active',
+      type: 'promotion',
+      isRead: false,
+    ),
+    NotificationItem(
+      id: '4',
+      title: 'Delivery Update',
+      message: 'Your package is out for delivery.',
+      timestamp: DateTime.now().subtract(const Duration(hours: 4)),
+      status: 'in_progress',
+      type: 'delivery',
+      isRead: false,
+    ),
+    NotificationItem(
+      id: '5',
+      title: 'Account Update',
+      message: 'Your profile has been successfully updated.',
+      timestamp: DateTime.now().subtract(const Duration(days: 3)),
+      status: 'completed',
+      type: 'account',
+      isRead: true,
+    ),
+  ];
+}
 class NotificationItem {
   final String id;
   final String title;
@@ -73,7 +122,10 @@ class NotificationItem {
   String toString() {
     return 'NotificationItem(id: $id, title: $title, message: $message, timestamp: $timestamp, status: $status, type: $type, isRead: $isRead)';
   }
+
+  
 }
+
 
 final notificationsProvider = StateNotifierProvider<NotificationsNotifier, List<NotificationItem>>((ref) {
   return NotificationsNotifier();
@@ -144,6 +196,7 @@ class NotificationsNotifier extends StateNotifier<List<NotificationItem>> {
       'time': getFormattedTime(notification.timestamp),
     };
   }
+ 
 }
 
 // Example API service class

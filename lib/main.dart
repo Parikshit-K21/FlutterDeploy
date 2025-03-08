@@ -1,5 +1,6 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
+import 'package:bw_sparsh/Reports/RetailerEntry2.dart';
 import 'package:bw_sparsh/homePage.dart';
 import 'package:bw_sparsh/home_tabs.dart';
 import 'package:bw_sparsh/Screens/sales_order.dart';
@@ -44,12 +45,13 @@ class SparshApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: currentTheme.toThemeData(),
       home: ResponsiveWrapper(
-        child:// NotificationsScreen(),
+        child: NotificationsScreen(),
               //HomeTabs(),
               //ForgotPasswordScreen(),
-                MyLogin()
+                //MyLogin()
               //OrderSaleScreen()
               //Try()
+             // RetailerRegistrationApp2()
               
       ),
     );

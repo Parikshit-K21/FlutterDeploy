@@ -1,118 +1,118 @@
+// Add this method in your NotificationsNotifier class or where you need to generate sample data
+import 'package:bw_sparsh/APIcaller/Modals/NotificationM.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../APIcaller/Modals/NotificationM.dart';
 
-class NotificationsScreen extends ConsumerWidget {
+// Updated NotificationsScreen with sample data
+class NotificationsScreen extends ConsumerStatefulWidget {
+  const NotificationsScreen({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final notifications = ref.watch(notificationsProvider);
+  _NotificationsScreenState createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with sample data
     final notifier = ref.read(notificationsProvider.notifier);
+    notifier.updateFromApi(
+      getSampleNotifications().map((n) => n.toJson()).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final notifications = ref.watch(notificationsProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
-        centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              // Refresh logic here if needed
+            },
+          ),
+        ],
       ),
-      body: ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          final displayData = notifier.getFormattedDisplayData(notification);
+      body: notifications.isEmpty
+          ? const Center(
+              child: Text('No notifications'),
+            )
+          : ListView.separated(
+              itemCount: notifications.length,
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, index) {
+                final notification = notifications[index];
+                final displayData = ref
+                    .read(notificationsProvider.notifier)
+                    .getFormattedDisplayData(notification);
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    spreadRadius: 1,
-                    blurRadius: 3,
-                    offset: const Offset(0, 2),
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: notification.isRead 
+                        ? Colors.grey[200] 
+                        : Colors.blue[100],
+                    child: Icon(
+                      _getNotificationIcon(notification.type),
+                      color: notification.isRead 
+                          ? Colors.grey 
+                          : Colors.blue,
+                    ),
                   ),
-                ],
-              ),
-              child: ListTile(
-                title: Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
+                  title: Text(
                     notification.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
+                    style: TextStyle(
+                      fontWeight: notification.isRead 
+                          ? FontWeight.normal 
+                          : FontWeight.bold,
                     ),
                   ),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(notification.message),
-                    const SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${displayData['day']} ${displayData['month']} ${displayData['year']}',
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.grey[600],
-                          ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(notification.message),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${displayData['day']} ${displayData['month']} ${displayData['year']} at ${displayData['time']}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
                         ),
-                        Text(
-                          displayData['time']!,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(notification.status),
-                    borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    notification.status.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.0,
-                    ),
-                  ),
-                ),
-                onTap: () {
-                  notifier.markAsRead(notification.id);
-                },
-              ),
+                  onTap: () {
+                    if (!notification.isRead) {
+                      ref
+                          .read(notificationsProvider.notifier)
+                          .markAsRead(notification.id);
+                    }
+                  },
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'success':
-        return Colors.green;
-      case 'pending':
-        return Colors.orange;
-      case 'cancel':
-        return Colors.red;
+  IconData _getNotificationIcon(String type) {
+    switch (type) {
+      case 'order':
+        return Icons.shopping_bag;
+      case 'payment':
+        return Icons.payment;
+      case 'promotion':
+        return Icons.local_offer;
+      case 'delivery':
+        return Icons.local_shipping;
+      case 'account':
+        return Icons.person;
       default:
-        return Colors.grey;
+        return Icons.notifications;
     }
   }
 }
