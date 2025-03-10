@@ -6,46 +6,41 @@ List<NotificationItem> getSampleNotifications() {
   return [
     NotificationItem(
       id: '1',
-      title: 'Order Confirmed',
       message: 'Your order #12345 has been confirmed and is being processed.',
       timestamp: DateTime.now().subtract(const Duration(hours: 1)),
-      status: 'confirmed',
+      status: 'Completed',
       type: 'order',
       isRead: false,
     ),
     NotificationItem(
-      id: '2',
-      title: 'Payment Successful',
+      id: '2', 
       message: 'Payment of ₹1,500 has been processed successfully.',
       timestamp: DateTime.now().subtract(const Duration(days: 1)),
-      status: 'completed',
+      status: 'Completed',
       type: 'payment',
       isRead: true,
     ),
     NotificationItem(
       id: '3',
-      title: 'New Offer Available',
       message: 'Special 20% discount on all electronics. Limited time offer!',
       timestamp: DateTime.now().subtract(const Duration(days: 2)),
-      status: 'active',
+      status: 'Cancelled',
       type: 'promotion',
       isRead: false,
     ),
     NotificationItem(
       id: '4',
-      title: 'Delivery Update',
       message: 'Your package is out for delivery.',
       timestamp: DateTime.now().subtract(const Duration(hours: 4)),
-      status: 'in_progress',
+      status: 'In Progress',
       type: 'delivery',
       isRead: false,
     ),
     NotificationItem(
       id: '5',
-      title: 'Account Update',
       message: 'Your profile has been successfully updated.',
       timestamp: DateTime.now().subtract(const Duration(days: 3)),
-      status: 'completed',
+      status: 'In Progress',
       type: 'account',
       isRead: true,
     ),
@@ -53,7 +48,6 @@ List<NotificationItem> getSampleNotifications() {
 }
 class NotificationItem {
   final String id;
-  final String title;
   final String message;
   final DateTime timestamp;
   final String status;
@@ -62,7 +56,6 @@ class NotificationItem {
 
   NotificationItem({
     required this.id,
-    required this.title,
     required this.message,
     required this.timestamp,
     required this.status,
@@ -74,7 +67,6 @@ class NotificationItem {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
       'message': message,
       'timestamp': timestamp.toIso8601String(),
       'status': status,
@@ -87,7 +79,6 @@ class NotificationItem {
   factory NotificationItem.fromApiResponse(Map<String, dynamic> json) {
     return NotificationItem(
       id: json['id']?.toString() ?? '',
-      title: json['title']?.toString() ?? '',
       message: json['message']?.toString() ?? '',
       timestamp: json['timestamp'] != null 
           ? DateTime.parse(json['timestamp'].toString())
@@ -100,7 +91,6 @@ class NotificationItem {
 
   NotificationItem copyWith({
     String? id,
-    String? title,
     String? message,
     DateTime? timestamp,
     String? status,
@@ -109,7 +99,6 @@ class NotificationItem {
   }) {
     return NotificationItem(
       id: id ?? this.id,
-      title: title ?? this.title,
       message: message ?? this.message,
       timestamp: timestamp ?? this.timestamp,
       status: status ?? this.status,
@@ -120,7 +109,7 @@ class NotificationItem {
 
   @override
   String toString() {
-    return 'NotificationItem(id: $id, title: $title, message: $message, timestamp: $timestamp, status: $status, type: $type, isRead: $isRead)';
+    return 'NotificationItem(id: $id, message: $message, timestamp: $timestamp, status: $status, type: $type, isRead: $isRead)';
   }
 
   
@@ -133,10 +122,17 @@ final notificationsProvider = StateNotifierProvider<NotificationsNotifier, List<
 
 class NotificationsNotifier extends StateNotifier<List<NotificationItem>> {
   NotificationsNotifier() : super([]);
+  final _notificationService = NotificationService();
 
   // Update notifications from API response
   void updateFromApi(List<Map<String, dynamic>> apiResponse) {
-    state = apiResponse.map((item) => NotificationItem.fromApiResponse(item)).toList();
+    try {
+      final validItems = apiResponse.where((item) => item != null).toList();
+      state = validItems.map((item) => NotificationItem.fromApiResponse(item)).toList();
+    } catch (e) {
+      print('Error updating notifications: $e');
+      state = [];
+    }
   }
 
   // Add a new notification
@@ -264,7 +260,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
               .getFormattedDisplayData(notification);
           
           return ListTile(
-            title: Text(notification.title),
+            : Text(notification.),
             subtitle: Text(notification.message),
             trailing: Text('${displayData['time']}'),
             onTap: () {

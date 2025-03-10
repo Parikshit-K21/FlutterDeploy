@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'universal.dart';
+import '../universal.dart';
 
 class StatusColorWidget extends StatelessWidget {
   final String status;

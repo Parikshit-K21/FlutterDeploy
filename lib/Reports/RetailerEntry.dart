@@ -1,14 +1,18 @@
 import 'dart:io' as io; // For mobile file handling
 import 'dart:typed_data'; // For web file handling
-import 'package:flutter/foundation.dart'; // To check platform
+import 'package:bw_sparsh/Logic/retailEService.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:bw_sparsh/custom_app_bar/side_bar.dart';
-import 'package:bw_sparsh/custom_app_bar/app_bar.dart';
+import 'package:flutter/services.dart';
+import 'package:bw_sparsh/Apicaller/ApiCon.dart';
 
-void main() {
-  runApp(const RetailerRegistrationApp());
-}
+import '../../custom_app_bar/app_bar.dart';
+import '../custom_app_bar/profile_sidebar.dart';
+import '../custom_app_bar/side_bar.dart';
+import '../homePage.dart';
+import 'Display.dart';
+
 
 class RetailerRegistrationApp extends StatelessWidget {
   const RetailerRegistrationApp({super.key});
@@ -32,11 +36,185 @@ class RetailerRegistrationPage extends StatefulWidget {
 
 class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
+  late final RetailerService _retailerService;
+  String? _areasCode;
+  List<String>? _areas;
+  List<String>? _states;
+
   String? _selectedOption;
 
   String? _uploadedFileName;
   Uint8List? _fileBytes; // For web
   String? _filePath; // For mobile
+
+  TextEditingController ProcesTp = TextEditingController();
+  TextEditingController retailCat = TextEditingController();
+  TextEditingController Area = TextEditingController();
+  TextEditingController District = TextEditingController();
+  TextEditingController GST = TextEditingController();
+  TextEditingController PAN = TextEditingController();
+  TextEditingController Mobile = TextEditingController();
+  TextEditingController Address = TextEditingController();
+  TextEditingController Scheme = TextEditingController();
+
+  ApiService api = ApiService();
+
+  Future<void> _loadStates() async {
+    try {
+      final data = await api.getStates();
+      setState(() {
+        _states = data;
+      });
+    } catch (e) {
+      print('Error loading data: $e');
+    }
+  }
+
+  Future<String> retailCodes(String cat) async {
+    final categoryMap = {
+      'Urban': 'URB',
+      'Rural': 'RUR',
+      'Direct': 'DDR'
+    };
+    return categoryMap[cat] ?? '';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _retailerService = RetailerService(api: ApiService());
+    _loadStates();
+  }
+
+  Future<void> _loadArea(String state) async {
+    try {
+      final areas = await _retailerService.getAreas(state);
+      setState(() {
+        _areas = areas;
+      });
+    } catch (e) {
+      _showError('Error loading areas: $e');
+    }
+  }
+
+  Future<void> areaCodes(String district) async {
+    try {
+      final code = await _retailerService.getAreaCode(district);
+      setState(() {
+        _areasCode = code;
+      });
+      print(_areasCode);
+    } catch (e) {
+      _showError('Error getting area code: $e');
+    }
+  }
+
+  // Add this helper method for showing errors
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  // Modify your submit button's onPressed handler
+ Future<void> _handleSubmit() async {
+  if (!_formKey.currentState!.validate()) {
+    _showError('Please fill all required fields');
+    return;
+  }
+
+  try {
+
+    // Get area code first
+    final areaCode = await _retailerService.getAreaCode(District.text);
+    print('Retrieved area code: $areaCode'); // Debug log
+
+    if (areaCode!.isEmpty) {
+      throw Exception('Invalid area code received');
+    }
+
+    // Get retail code
+    final retailCode = await retailCodes(retailCat.text);
+    print('Retrieved retail code: $retailCode'); // Debug log
+
+    if (retailCode.isEmpty) {
+      throw Exception('Invalid retail code received');
+    }
+
+    // Generate document number
+    final year = (DateTime.now().year % 100).toString();
+    final doc = await _retailerService.generateDocumentNumber(
+      year,
+      areaCode,
+      retailCode,
+    );
+
+    print('Generated document number: $doc'); // Debug log
+
+    // Submit data
+    await _retailerService.submitRetailerData(
+      doc: doc,
+      processType: ProcesTp.text,
+      gst: GST.text,
+      time: DateTime.now(),
+      mobile: Mobile.text,
+      area: Area.text,
+      district: District.text,
+      retailCategory: retailCat.text,
+      address: Address.text,
+    );
+
+    
+
+    await Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const SearchTablePage()),
+    );
+  } catch (e) {
+    _showError(e.toString());
+  }
+}
+
+  // Update your submit button in the build method
+  Widget _buildSubmitButton() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        onPressed: _handleSubmit,
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          backgroundColor: const Color.fromRGBO(0, 112, 183, 1),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        child: const Text(
+          'Submit',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
 
   void _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -75,7 +253,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                       _uploadedFileName!.endsWith('.jpeg')
                   ? Image.memory(
                       _fileBytes!,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     )
                   : Center(
                       child: const Text(
@@ -96,13 +274,13 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             child: Container(
               padding: const EdgeInsets.all(16.0),
               width: 300,
-              height: 400,
+              height: 500,
               child: _filePath!.endsWith('.jpg') ||
                       _filePath!.endsWith('.png') ||
                       _filePath!.endsWith('.jpeg')
                   ? Image.file(
                       io.File(_filePath!),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     )
                   : Center(
                       child: const Text(
@@ -120,71 +298,75 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
-      endDrawer: const CustomSidebar(),
+      appBar: CustomAppBar(),
+      drawer: CustomSidebar(),
+      endDrawer: const ProfileSidebar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWideScreen = MediaQuery.of(context).size.width > 1080;
 
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Retailer Registration',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
-                      ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(
+                          0, 112, 183, 1), // Background color
                     ),
-                    const SizedBox(height: 16.0),
-                    isWideScreen
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(child: _buildBasicDetailsForm()),
-                              const SizedBox(width: 16.0),
-                              Expanded(child: _buildContactDetailsForm()),
-                            ],
-                          )
-                        : Column(
-                            children: [
-                              _buildBasicDetailsForm(),
-                              const SizedBox(height: 16.0),
-                              _buildContactDetailsForm(),
-                            ],
-                          ),
-                    const SizedBox(height: 32.0),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Form Submitted Successfully!')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 16),
-                          backgroundColor: Colors.blueAccent,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: () {
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ContentPage()),
+                              );
+                            }
+                          },
                         ),
-                        child: const Text('Submit',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white)),
-                      ),
+                        const SizedBox(
+                            width: 8), // Spacing between icon and text
+                        const Text(
+                          'Retailer Registration',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white, // White text color
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  isWideScreen
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _buildBasicDetailsForm()),
+                            const SizedBox(width: 8.0),
+                            Expanded(child: _buildContactDetailsForm()),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            _buildBasicDetailsForm(),
+                            const SizedBox(height: 16.0),
+                            _buildContactDetailsForm(),
+                          ],
+                        ),
+                  const SizedBox(height: 16.0),
+                  _buildSubmitButton(), // Use the new submit button
+                ],
               ),
             ),
           );
@@ -195,7 +377,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
 
   Widget _buildBasicDetailsForm() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -213,74 +395,36 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
           const Text(
             'Basic Details',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: Color.fromRGBO(0, 112, 183, 1),
             ),
           ),
-          const SizedBox(height: 16.0),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDropdownField('Process Type*', ['Add', 'Update']),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildDropdownField(
-                    'Retailer Category*', ['Urban', 'Rural', 'Direct Dealer']),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child:
-                    _buildDropdownField('Area*', ['Rajasthan', 'Maharashtra']),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildDropdownField('District*', ['Jaipur', 'Mumbai']),
-              ),
-            ],
-          ),
-          _buildClickableOptions(
-              'Register With PAN/GST*', ['With GST', 'With PAN']),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('GST Number*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('PAN Number*'),
-              ),
-            ],
-          ),
-          _buildTextField('Firm Name*'),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Mobile*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('Office Telephone'),
-              ),
-            ],
-          ),
-          _buildTextField('Email'),
-          _buildTextField('Address 1*'),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Address 2'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('Address 3'),
-              ),
-            ],
-          ),
+          const SizedBox(height: 8.0),
+          _buildDropdownField('Process Type*', ['Add', 'Update'], ProcesTp),
+          _buildDropdownField('Retailer Category*',
+              ['Urban', 'Rural', 'Direct Dealer'], retailCat),
+          _buildDropdownField('Area*', _states ?? [], Area, onChanged: (value) {
+            setState(() {
+              Area.text = value!;
+              District.text = ''; // Reset district when area changes
+              _loadArea(value); // Load districts for selected area
+            });
+          }),
+          _buildDropdownField('District*', _areas ?? [], District),
+          _buildClickableOptions('Register With PAN/GST*', ['GST', 'PAN']),
+          _buildTextField('GST Number*', GST),
+          _buildTextField('PAN Number*', PAN),
+          _buildTextField('Firm Name', TextEditingController()),
+          _buildTextField('Mobile*', Mobile, inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly, // Allow only digits
+            LengthLimitingTextInputFormatter(10), // Optional: limit to 10 digits
+          ]),
+          _buildTextField('Office Telephone', TextEditingController()),
+          _buildTextField('Email', TextEditingController()),
+          _buildTextField('Address 1*', Address),
+          _buildTextField('Address 2', TextEditingController()),
+          _buildTextField('Address 3', TextEditingController()),
         ],
       ),
     );
@@ -288,7 +432,7 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
 
   Widget _buildContactDetailsForm() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.0),
@@ -306,111 +450,100 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
           const Text(
             'Contact Details',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: Color.fromRGBO(0, 112, 183, 1),
             ),
           ),
-          const SizedBox(height: 16.0),
-          Row(
-            children: [
-              Expanded(
-                child: _buildPredefinedField('Stockist Code*', '4401S711'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildTextField('Tally Retailer Code'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Concern Employee*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildUploadField('Retailer Profile Image'),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildUploadField('PAN / GST No Image Upload / View'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildDropdownField('Scheme Required*', ['Yes', 'No']),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _buildTextField('Aadhar Card No*'),
-              ),
-              const SizedBox(width: 16.0),
-              Expanded(
-                child: _buildUploadField('Aadhar Card Upload'),
-              ),
-            ],
-          ),
-          _buildTextField('Proprietor / Partner Name*'),
+          const SizedBox(height: 8.0),
+          _buildPredefinedField('Stockist Code', '4401S711'),
+          _buildTextField('Tally Retailer Code', TextEditingController()),
+          _buildTextField('Concern Employee', TextEditingController()),
+          _buildUploadField('Retailer Profile Image'),
+          _buildUploadField('PAN / GST No Image Upload / View'),
+          _buildDropdownField('Scheme Required', ['Yes', 'No'], Scheme),
+          _buildTextField('Aadhar Card No', TextEditingController()),
+          _buildUploadField('Aadhar Card Upload'),
+          _buildTextField('Proprietor / Partner Name', TextEditingController()),
         ],
       ),
     );
   }
 
-  Widget _buildTextField(String label) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      {List<TextInputFormatter>? inputFormatters}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
-        TextFormField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Text(label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 2),
+        SizedBox(
+          height: 40,
+          child: TextFormField(
+            controller: controller,
+            style: const TextStyle(fontSize: 14),
+            inputFormatters: inputFormatters,
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
+            validator: (value) {
+              if (label.endsWith('*') && (value == null || value.isEmpty)) {
+                return 'This field is required';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (label.endsWith('*') && (value == null || value.isEmpty)) {
-              return 'This field is required';
-            }
-            return null;
-          },
         ),
         const SizedBox(height: 16.0),
       ],
     );
   }
 
-  Widget _buildDropdownField(String label, List<String> items) {
+  Widget _buildDropdownField(String label, List<String> items,
+      TextEditingController controller,
+      {ValueChanged<String?>? onChanged}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
-        DropdownButtonFormField<String>(
-          items: items
-              .map((item) => DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
-                  ))
-              .toList(),
-          onChanged: (value) {},
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(height: 2),
+        SizedBox(
+          height: 40,
+          child: DropdownButtonFormField<String>(
+            value: controller.text.isNotEmpty && items.contains(controller.text)
+                ? controller.text
+                : null, // Set to null if value is not in items
+            items: items.map((item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                controller.text = value!;
+              });
+              if (onChanged != null) {
+                onChanged(value);
+              }
+            },
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
+            validator: (selectedValue) {
+              if (label.endsWith('*') && selectedValue == null) {
+                return 'This field is required';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (label.endsWith('*') && value == null) {
-              return 'This field is required';
-            }
-            return null;
-          },
         ),
         const SizedBox(height: 16.0),
       ],
@@ -421,10 +554,11 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 8.0),
+        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(height: 2.0),
         Wrap(
-          spacing: 8.0,
+          spacing: 8.0, // Adjust spacing between chips if needed
+          runSpacing: 8.0, // Adjust spacing between rows if needed
           children: options.map((option) {
             final isSelected = _selectedOption == option;
             return ChoiceChip(
@@ -435,11 +569,17 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
                   _selectedOption = selected ? option : null;
                 });
               },
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : Colors.blueAccent,
+              labelStyle: const TextStyle(color: Colors.white),
+              backgroundColor: const Color.fromRGBO(0, 112, 183, 1),
+              selectedColor: const Color.fromRGBO(0, 112, 183, 1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0), // Circular shape
+                side: BorderSide(
+                  color: isSelected
+                      ? Colors.white
+                      : Colors.transparent, // Optional border
+                ),
               ),
-              backgroundColor: Colors.blue[100],
-              selectedColor: Colors.blueAccent,
             );
           }).toList(),
         ),
@@ -452,34 +592,53 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
+        Text(label, style: const TextStyle(fontSize: 14)),
         const SizedBox(height: 4),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            ElevatedButton(
-              onPressed: _pickFile,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+            SizedBox(
+              height: 40,
+              width: 120, // Increased width for better spacing
+              child: ElevatedButton.icon(
+                onPressed: _pickFile,
+                icon: const Icon(Icons.file_upload,
+                    size: 18, color: Colors.white),
+                label: const Text('Upload',
+                    style: TextStyle(fontSize: 14, color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(0, 112, 183, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(4.0), // Rectangular shape
+                  ),
+                ),
               ),
-              child:
-                  const Text('Upload', style: TextStyle(color: Colors.white)),
             ),
-            ElevatedButton(
-              onPressed: _uploadedFileName != null ? _viewFile : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+            const SizedBox(width: 16),
+            SizedBox(
+              height: 40,
+              width: 120,
+              child: ElevatedButton.icon(
+                onPressed: _uploadedFileName != null ? _viewFile : null,
+                icon: const Icon(Icons.remove_red_eye_outlined,
+                    size: 18, color: Colors.white),
+                label: const Text('View',
+                    style: TextStyle(fontSize: 14, color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  padding: EdgeInsets.zero,
+                ),
               ),
-              child: const Text('View', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
         if (_uploadedFileName != null)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 2.0),
             child: Text(
               'Uploaded File: ${_uploadedFileName!.split('/').last}',
-              style: const TextStyle(color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
         const SizedBox(height: 16.0),
@@ -491,14 +650,19 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
-        const SizedBox(height: 4),
-        TextFormField(
-          initialValue: value,
-          enabled: false,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
+        Text(label, style: const TextStyle(fontSize: 14)),
+        const SizedBox(height: 2),
+        SizedBox(
+          height: 40,
+          child: TextFormField(
+            initialValue: value,
+            enabled: false,
+            style: const TextStyle(fontSize: 14),
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(left: 8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
             ),
           ),
         ),

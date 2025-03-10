@@ -1,5 +1,6 @@
 // Add this method in your NotificationsNotifier class or where you need to generate sample data
 import 'package:bw_sparsh/APIcaller/Modals/NotificationM.dart';
+import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,14 +14,25 @@ class NotificationsScreen extends ConsumerStatefulWidget {
 }
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
+  final _notificationService = NotificationService();
+
+  Future<void> _fetchNotifications() async {
+    try {
+      final apiResponse = await _notificationService.fetchNotifications();
+      ref.read(notificationsProvider.notifier).updateFromApi(apiResponse);
+    } catch (e) {
+      final sampleData = getSampleNotifications();
+      ref.read(notificationsProvider.notifier).updateFromApi(
+        sampleData.map((notification) => notification.toJson()).toList(),
+      );
+      print('Error: $e. Using sample data.');
+    }
+  }
+  
   @override
   void initState() {
     super.initState();
-    // Initialize with sample data
-    final notifier = ref.read(notificationsProvider.notifier);
-    notifier.updateFromApi(
-      getSampleNotifications().map((n) => n.toJson()).toList(),
-    );
+    _fetchNotifications();
   }
 
   @override
@@ -33,9 +45,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () {
-              // Refresh logic here if needed
-            },
+            onPressed: _fetchNotifications,
           ),
         ],
       ),
@@ -43,76 +53,121 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           ? const Center(
               child: Text('No notifications'),
             )
-          : ListView.separated(
-              itemCount: notifications.length,
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, index) {
-                final notification = notifications[index];
-                final displayData = ref
-                    .read(notificationsProvider.notifier)
-                    .getFormattedDisplayData(notification);
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: notifications.map((notification) {
+                    final displayData = ref
+                        .read(notificationsProvider.notifier)
+                        .getFormattedDisplayData(notification);
 
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: notification.isRead 
-                        ? Colors.grey[200] 
-                        : Colors.blue[100],
-                    child: Icon(
-                      _getNotificationIcon(notification.type),
-                      color: notification.isRead 
-                          ? Colors.grey 
-                          : Colors.blue,
-                    ),
-                  ),
-                  title: Text(
-                    notification.title,
-                    style: TextStyle(
-                      fontWeight: notification.isRead 
-                          ? FontWeight.normal 
-                          : FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(notification.message),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${displayData['day']} ${displayData['month']} ${displayData['year']} at ${displayData['time']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Card(
+                        elevation: 2,
+                        child: InkWell(
+                          onTap: () {
+                            if (!notification.isRead) {
+                              ref
+                                  .read(notificationsProvider.notifier)
+                                  .markAsRead(notification.id);
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Date Container
+                                Container(
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        displayData['day']!,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        displayData['month']!,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        displayData['time']!,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Message and Status
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Text(
+                                        notification.message,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: notification.isRead
+                                              ? Colors.grey[600]
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                       Text(
+                                          notification.status,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: _getStatusColor(
+                                                notification.status),
+                                          
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                  onTap: () {
-                    if (!notification.isRead) {
-                      ref
-                          .read(notificationsProvider.notifier)
-                          .markAsRead(notification.id);
-                    }
-                  },
-                );
-              },
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
     );
   }
 
-  IconData _getNotificationIcon(String type) {
-    switch (type) {
-      case 'order':
-        return Icons.shopping_bag;
-      case 'payment':
-        return Icons.payment;
-      case 'promotion':
-        return Icons.local_offer;
-      case 'delivery':
-        return Icons.local_shipping;
-      case 'account':
-        return Icons.person;
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return Colors.green;
+      case 'cancelled':
+        return Colors.red;
       default:
-        return Icons.notifications;
+        return Colors.orange;
     }
   }
 }

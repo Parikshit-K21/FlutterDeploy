@@ -1,6 +1,6 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
-import 'package:bw_sparsh/Reports/RetailerEntry2.dart';
+import 'package:bw_sparsh/Reports/RetailerEntry.dart';
 import 'package:bw_sparsh/homePage.dart';
 import 'package:bw_sparsh/home_tabs.dart';
 import 'package:bw_sparsh/Screens/sales_order.dart';
@@ -9,10 +9,9 @@ import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'Screens/Notifications.dart';
 
-void main() async{
+void main() async{  
   WidgetsFlutterBinding.ensureInitialized();
   
   // Preload the font
@@ -45,13 +44,13 @@ class SparshApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: currentTheme.toThemeData(),
       home: ResponsiveWrapper(
-        child: NotificationsScreen(),
+        child: //NotificationsScreen(),
               //HomeTabs(),
               //ForgotPasswordScreen(),
-                //MyLogin()
+                MyLogin()
               //OrderSaleScreen()
               //Try()
-             // RetailerRegistrationApp2()
+             //RetailerRegistrationApp()
               
       ),
     );

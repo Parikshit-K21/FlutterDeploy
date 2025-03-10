@@ -123,17 +123,26 @@ Future<List<String>> getStates() async {
   }
 
 
-  Future<String> getAreaCode(String area) async {
-     try{
-    final response = await http.get(Uri.parse('$baseUrl/areaCode/{$area}'));
-    if (response.statusCode == 200) {
-       return (jsonDecode(response.body)).toString();
+Future<String> getAreaCode(String area) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/areaCode/$area'),
+        headers: {'Accept': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        // Parse and validate the response
+        final areaCode = response.body;
+        if (areaCode.isEmpty) {
+          throw Exception('Empty area code received');
+        }
+        return areaCode;
+      } else {
+        throw Exception('Failed to get area code. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching area code: $e');
     }
-    throw Exception('Failed to load areaCOde');
-   } catch(e) {
-      print(e);
-      throw Exception('Error loading areaCode: $e');
-   }
   }
 
 

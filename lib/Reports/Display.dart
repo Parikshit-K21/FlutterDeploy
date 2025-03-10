@@ -24,7 +24,7 @@ class _SearchTablePageState extends State<SearchTablePage> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://localhost:5126/api/Control/$docuNumb');
+    final url = Uri.parse('http://localhost:5071/api/Control/$docuNumb');
 
     try {
       final response = await http.get(url);
@@ -67,7 +67,7 @@ class _SearchTablePageState extends State<SearchTablePage> {
       _isLoading = true;
     });
 
-     final url = Uri.parse('http://localhost:5126/api/Control');
+     final url = Uri.parse('http://localhost:5071/api/Control');
 
     try {
       final response = await http.get(url);
