@@ -415,7 +415,7 @@ class _OrderEntryState extends State<OrderEntry> {
                                   ],
                                 ),
                               );
-                            }).toList(),
+                            }),
                           ],
                         ),
                       ),

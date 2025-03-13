@@ -6,7 +6,7 @@ import 'package:bw_sparsh/Logic/QR_scanner.dart';
 import 'package:bw_sparsh/Reports/order_update.dart';
 
 class SearchBarWidget extends StatefulWidget {
-  SearchBarWidget({super.key});
+  const SearchBarWidget({super.key});
 
   @override
   _SearchBarWidgetState createState() => _SearchBarWidgetState();

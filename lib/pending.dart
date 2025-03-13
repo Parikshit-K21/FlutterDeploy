@@ -16,11 +16,10 @@ final pendingDataProvider = FutureProvider<List<Map<String, dynamic>>>((ref) asy
   return List<Map<String, dynamic>>.from(data);
 });
 
-void main() {
-  runApp(ProviderScope(child: MyApp()));
-}
 
-class MyApp extends StatelessWidget {
+class Pending extends StatelessWidget {
+  const Pending({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

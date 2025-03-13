@@ -61,23 +61,29 @@ class _CustomCarouselState extends State<CustomCarousel> {
             },
           ),
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            imagePaths.length,
-            (index) => AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              height: currentIndex == index ? 10 : 6,
-              width: currentIndex == index ? 10 : 6,
-              decoration: BoxDecoration(
-                color: currentIndex == index ? Colors.blue : Colors.grey,
-                shape: BoxShape.circle,
+        const SizedBox(height: 2),
+       Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              imagePaths.length,
+              (index) => Container(
+                // Fixed size container to prevent shifting
+                height: 5, // Set to the maximum height of AnimatedContainer
+                width: 5,  // Set to the maximum width of AnimatedContainer
+                alignment: Alignment.center, // Center the AnimatedContainer
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  height: currentIndex == index ? 10 : 6,
+                  width: currentIndex == index ? 10 : 6,
+                  decoration: BoxDecoration(
+                    color: currentIndex == index ? Colors.blue : Colors.grey,
+                    shape: BoxShape.circle,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }

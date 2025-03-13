@@ -1,9 +1,12 @@
+import 'package:bw_sparsh/Logic/QR_scanner.dart';
 import 'package:bw_sparsh/Login/forgetpass.dart';
 import 'package:bw_sparsh/Login/login1.dart';
 import 'package:bw_sparsh/Reports/RetailerEntry.dart';
+import 'package:bw_sparsh/Screens/dsr_Visit.dart';
 import 'package:bw_sparsh/homePage.dart';
 import 'package:bw_sparsh/home_tabs.dart';
 import 'package:bw_sparsh/Screens/sales_order.dart';
+import 'package:bw_sparsh/pending.dart';
 import 'package:bw_sparsh/try.dart';
 import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
@@ -26,7 +29,7 @@ void main() async{
 }
 
 class SparshApp extends ConsumerWidget {
-  const SparshApp({Key? key}) : super(key: key);
+  const SparshApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,12 +48,14 @@ class SparshApp extends ConsumerWidget {
       theme: currentTheme.toThemeData(),
       home: ResponsiveWrapper(
         child: //NotificationsScreen(),
-              //HomeTabs(),
+              //ContentPage(),
               //ForgotPasswordScreen(),
                 MyLogin()
               //OrderSaleScreen()
               //Try()
+              //DSR()
              //RetailerRegistrationApp()
+             //Pending( )
               
       ),
     );

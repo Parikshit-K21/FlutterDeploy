@@ -1,6 +1,4 @@
 import 'package:bw_sparsh/Login/forgetpass.dart';
-import 'package:bw_sparsh/Screens/Notifications.dart';
-import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

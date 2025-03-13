@@ -1,6 +1,5 @@
 import 'package:bw_sparsh/Screens/bannerLogin.dart';
 import 'package:bw_sparsh/home_tabs.dart';
-import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bw_sparsh/custom_app_bar/profile_sidebar.dart';
@@ -8,10 +7,10 @@ import 'package:bw_sparsh/custom_app_bar/side_bar.dart';
 import 'package:bw_sparsh/custom_app_bar/app_bar.dart';
 import 'package:bw_sparsh/Logic/carousal.dart';
 
-import 'package:flutter/foundation.dart';
 
 
 import 'custom_app_bar/bottom_nav_bar_mobile.dart';
+import 'mostUsed.dart';
 
 
 
@@ -50,14 +49,18 @@ class HomeBase extends StatelessWidget {
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 1,
-                    horizontal: 1,
+                    vertical: 5,
+                    horizontal: 5,
                   ),
                   child: const CustomCarousel(),
                 ),
+                const SizedBox(height: 5),
+                MostlyUsedApps(apps: appData),
+                const SizedBox(height: 5),
                 const HomeTabs(),
               ],
             ),
@@ -85,3 +88,9 @@ class HomeBase extends StatelessWidget {
     );
   }
 }
+final appData = [
+    {'name': 'DSR', 'icon': Icons.bar_chart},
+    {'name': 'Staff Attendance', 'icon': Icons.person_add},
+    {'name': 'DSR Exception', 'icon': Icons.description},
+    {'name': 'Token Scan', 'icon': Icons.qr_code_scanner},
+  ];

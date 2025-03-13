@@ -25,7 +25,7 @@ class PasswordResetService {
 final passwordResetServiceProvider = Provider<PasswordResetService>((ref) => PasswordResetService());
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+  const ForgotPasswordScreen({super.key});
 
   @override
   ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();

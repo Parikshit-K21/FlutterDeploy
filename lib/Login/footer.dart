@@ -8,13 +8,13 @@ class Footer extends StatelessWidget {
   final EdgeInsets padding;
 
   const Footer({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.backgroundColor,
     this.height = 50.0,
     this.padding = const EdgeInsets.symmetric(horizontal: 16.0),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -110,7 +110,7 @@ class RetailerService {
           break;
         } catch (e) {
           retryCount++;
-          if (retryCount == 3) throw e;
+          if (retryCount == 3) rethrow;
           await Future.delayed(Duration(seconds: 2));
         }
       }

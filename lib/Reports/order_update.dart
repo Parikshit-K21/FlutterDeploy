@@ -363,7 +363,7 @@ class _OrderEntryState extends State<OrderUpdate> {
                                     ],
                                   ),
                                 );
-                              }).toList(),
+                              }),
                             ],
                           ),
                         ),

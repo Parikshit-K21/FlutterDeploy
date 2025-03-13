@@ -2,6 +2,8 @@ import 'package:bw_sparsh/Apicaller/ApiCon.dart';
 import 'package:flutter/material.dart';
 
 class Try extends StatefulWidget {
+  const Try({super.key});
+
   @override
   _TryState createState() => _TryState();
 }
@@ -61,8 +63,8 @@ class _TryState extends State<Try> {
               value: _selectedState,
               items: _states.map((state) {
                 return DropdownMenuItem(
-                  child: Text(state),
                   value: state,
+                  child: Text(state),
                 );
               }).toList(),
               onChanged: (String? newState) {
@@ -78,8 +80,8 @@ class _TryState extends State<Try> {
               value: _selectedArea,
               items: _areas.map((area) {
                 return DropdownMenuItem(
-                  child: Text(area),
                   value: area,
+                  child: Text(area),
                 );
               }).toList(),
               onChanged: (String? newArea) {

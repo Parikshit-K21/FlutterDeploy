@@ -1,5 +1,5 @@
 import 'dart:io' as io; // For mobile file handling
-import 'dart:typed_data'; // For web file handling
+// For web file handling
 import 'package:bw_sparsh/Logic/retailEService.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

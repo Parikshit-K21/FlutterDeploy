@@ -4,7 +4,7 @@ import '../universal.dart';
 
 class StatusColorWidget extends StatelessWidget {
   final String status;
-  const StatusColorWidget({Key? key, required this.status}) : super(key: key);
+  const StatusColorWidget({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {

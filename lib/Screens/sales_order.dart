@@ -90,7 +90,7 @@ class OrderDetail {
 
 
 class OrderSaleScreen extends ConsumerWidget {
-  const OrderSaleScreen({Key? key}) : super(key: key);
+  const OrderSaleScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final jsonData = ref.watch(orderDetailsProvider);
@@ -153,7 +153,7 @@ class OrderSaleScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${order.dmsNumber}',
+                        Text(order.dmsNumber,
                               style: TextStyle( fontWeight: FontWeight.bold),),
                         Text(order.location),
                         const SizedBox(height: 6),
