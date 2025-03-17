@@ -1,6 +1,4 @@
-// Add this method in your NotificationsNotifier class or where you need to generate sample data
 import 'package:bw_sparsh/APIcaller/Modals/NotificationM.dart';
-import 'package:bw_sparsh/universal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

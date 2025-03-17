@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../APIcaller/LoginApi.dart';
 import '../APIcaller/Modals/LoginM.dart';
-import '../homePage.dart';
+import '../Screens/homePAge/homePage.dart';
 import 'footer.dart';
 import 'login_otp.dart';
 import 'secure_storage.dart';
@@ -194,8 +194,8 @@ class _MyLoginState extends ConsumerState<MyLogin> with TickerProviderStateMixin
               ),
               Flexible(
                 flex: 7,
-                child: SlideTransition(
-                  position: _animation,
+                // child: SlideTransition(
+                //   position: _animation,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
@@ -315,8 +315,7 @@ class _MyLoginState extends ConsumerState<MyLogin> with TickerProviderStateMixin
                       ],
                     ),
                   ),
-                ),
-              ),
+              )
                
             ],
             

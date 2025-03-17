@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:convert';
 import '../Logic/statusColor.dart';
-import '../universal.dart';
 
 
 final orderDetailsProvider = StateProvider<String>((ref) => '''

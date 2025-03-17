@@ -1,15 +1,12 @@
 import 'package:bw_sparsh/Screens/bannerLogin.dart';
-import 'package:bw_sparsh/home_tabs.dart';
+import 'package:bw_sparsh/Screens/homePAge/home_tabs.dart';
+import 'package:bw_sparsh/pending.dart';
 import 'package:flutter/material.dart';
-
 import 'package:bw_sparsh/custom_app_bar/profile_sidebar.dart';
 import 'package:bw_sparsh/custom_app_bar/side_bar.dart';
 import 'package:bw_sparsh/custom_app_bar/app_bar.dart';
 import 'package:bw_sparsh/Logic/carousal.dart';
-
-
-
-import 'custom_app_bar/bottom_nav_bar_mobile.dart';
+import '../../custom_app_bar/bottom_nav_bar_mobile.dart';
 import 'mostUsed.dart';
 
 
@@ -60,7 +57,11 @@ class HomeBase extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 MostlyUsedApps(apps: appData),
-                const SizedBox(height: 5),
+                PendingWidget(
+                  width: double.infinity,
+                  height: 210,
+                ),
+               const SizedBox(height: 5),
                 const HomeTabs(),
               ],
             ),

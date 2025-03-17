@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bw_sparsh/homePage.dart';
+import 'package:bw_sparsh/Screens/homePAge/homePage.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});

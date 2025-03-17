@@ -1,18 +1,15 @@
-import 'package:bw_sparsh/Logic/QR_scanner.dart';
-import 'package:bw_sparsh/Login/forgetpass.dart';
-import 'package:bw_sparsh/Login/login1.dart';
-import 'package:bw_sparsh/Reports/RetailerEntry.dart';
-import 'package:bw_sparsh/Screens/dsr_Visit.dart';
-import 'package:bw_sparsh/homePage.dart';
-import 'package:bw_sparsh/home_tabs.dart';
-import 'package:bw_sparsh/Screens/sales_order.dart';
-import 'package:bw_sparsh/pending.dart';
-import 'package:bw_sparsh/try.dart';
+import 'package:bw_sparsh/Login/firstSc.dart';
+import 'package:bw_sparsh/Login/loginPage.dart';
 import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'Screens/Notifications.dart';
+import 'Screens/homePAge/homePage.dart';
+import 'Screens/sales_order.dart';
+import 'pending.dart';
+import 'try.dart';
 
 void main() async{  
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,12 +47,13 @@ class SparshApp extends ConsumerWidget {
         child: //NotificationsScreen(),
               //ContentPage(),
               //ForgotPasswordScreen(),
-                MyLogin()
+               //MyLogin()
+              Firstsc()
               //OrderSaleScreen()
               //Try()
               //DSR()
              //RetailerRegistrationApp()
-             //Pending( )
+             //PendingWidget()
               
       ),
     );

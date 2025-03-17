@@ -1,6 +1,7 @@
 import 'package:bw_sparsh/Screens/sales_order.dart';
 import 'package:flutter/material.dart';
-import 'package:bw_sparsh/HomePAge.dart';
+
+import '../Screens/homePAge/homePage.dart';
 // import 'app_links.dart';
 // import 'package:bw_sparshRetailerEntry.dart';
 // import 'package:bw_sparshQR_scanner.dart';

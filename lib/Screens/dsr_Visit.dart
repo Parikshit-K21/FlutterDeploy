@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import '../custom_app_bar/app_bar.dart';
 import '../custom_app_bar/profile_sidebar.dart';
 import '../custom_app_bar/side_bar.dart';
-import '../homePage.dart';
+import 'homePAge/homePage.dart';
 
 
 class DSR extends StatelessWidget {
