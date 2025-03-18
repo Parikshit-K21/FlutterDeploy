@@ -8,7 +8,7 @@ class MostlyUsedApps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-     
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -20,27 +20,27 @@ class MostlyUsedApps extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
       ),
       child: SingleChildScrollView(
-scrollDirection: Axis.horizontal,
-child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Mostly Use Apps',
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
+        scrollDirection: Axis.horizontal,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Mostly Use Apps',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 16.0),
-          Wrap(
-            spacing: 10.0, // Space between widgets in the row
-            runSpacing: 10.0, // Space between rows
-            children: apps.map((app) {
-              return _buildAppItem(app);
-            }).toList(),
-          ),
-        ],
-      ),
+            SizedBox(height: 16.0),
+            Wrap(
+              spacing: 10.0, // Space between widgets in the row
+              runSpacing: 10.0, // Space between rows
+              children: apps.map((app) {
+                return _buildAppItem(app);
+              }).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }

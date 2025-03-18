@@ -47,7 +47,7 @@ class _HomeTabsState extends State<HomeTabs> {
               child: Row(
                 children: List.generate(
                   _tabTitles.length,
-                  (index) => Padding(
+                      (index) => Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: appTheme.spacing.xsmall,
                     ),
@@ -59,22 +59,22 @@ class _HomeTabsState extends State<HomeTabs> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            _selectedTabIndex == index
-                                ? appTheme.primaryColor
-                                : appTheme.surfaceColor,
+                        _selectedTabIndex == index
+                            ? appTheme.primaryColor
+                            : appTheme.surfaceColor,
                         foregroundColor:
-                            _selectedTabIndex == index
-                                ? appTheme.onPrimaryColor
-                                : appTheme.primaryColor,
+                        _selectedTabIndex == index
+                            ? appTheme.onPrimaryColor
+                            : appTheme.primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                             appTheme.buttonBorderRadius,
                           ),
                           side: BorderSide(
                             color:
-                                _selectedTabIndex == index
-                                    ? appTheme.primaryColor
-                                    : appTheme.neutralColor,
+                            _selectedTabIndex == index
+                                ? appTheme.primaryColor
+                                : appTheme.neutralColor,
                           ),
                         ),
                         elevation: 0,
