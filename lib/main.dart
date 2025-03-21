@@ -1,5 +1,6 @@
 import 'package:bw_sparsh/Login/firstSc.dart';
 import 'package:bw_sparsh/Login/loginPage.dart';
+import 'package:bw_sparsh/Reports/RetailerEntry.dart';
 import 'package:bw_sparsh/universal.dart'as sparsh;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,10 +46,10 @@ class SparshApp extends ConsumerWidget {
       theme: currentTheme.toThemeData(),
       home: ResponsiveWrapper(
         child: //NotificationsScreen(),
-              //ContentPage(),
+              ContentPage(),
               //ForgotPasswordScreen(),
                //MyLogin()
-              Firstsc()
+              //Firstsc()
               //OrderSaleScreen()
               //Try()
               //DSR()

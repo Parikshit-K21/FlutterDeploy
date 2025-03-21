@@ -1,5 +1,8 @@
+import 'package:bw_sparsh/Reports/RetailerEntry.dart';
+import 'package:bw_sparsh/Screens/sales_order.dart';
 import 'package:flutter/material.dart';
 // Import your universal.dart
+import '../../Reports/salesDashboard.dart';
 import '../../universal.dart';
 
 
@@ -135,8 +138,8 @@ class _HomeTabsState extends State<HomeTabs> {
             color: appTheme.warningColor,
           ),
           GridItem(
-            icon: Icons.analytics,
-            title: 'RPL Outlet Tracker',
+            icon: Icons.summarize_outlined,
+            title: 'Sales Summary',
             color: appTheme.primaryColor,
           ),
           GridItem(
@@ -188,15 +191,34 @@ class _HomeTabsState extends State<HomeTabs> {
         childAspectRatio: .5,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        children: items.map((item) => _buildGridItem(item)).toList(),
+        children: items.map((item) => _buildGridItem(item, context)).toList(),
       ),
     );
   }
 
-  Widget _buildGridItem(GridItem item) {
+  Widget _buildGridItem(GridItem item, BuildContext context) {
     final AppTheme appTheme = AppTheme();
 
-    return Column(
+    return GestureDetector(
+      onTap: () {
+        if(item.title=="RPL Outlet Tracker"){
+          Navigator.push(context, 
+          MaterialPageRoute(builder: (context) => RetailerRegistrationApp()));
+        }
+        else if(item.title=="DKC Lead Entry"){
+          Navigator.push(context, 
+          MaterialPageRoute(builder: (context) => OrderSaleScreen()));
+        }
+        else if (item.title == 'Sales Summary') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SalesSummaryPage()),
+      );
+    }
+      },
+      child: 
+    
+    Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
@@ -241,6 +263,7 @@ class _HomeTabsState extends State<HomeTabs> {
           ),
         )
       ],
+    )
     );
   }
 }

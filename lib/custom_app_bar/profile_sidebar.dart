@@ -22,7 +22,7 @@ class _ProfileSidebarState extends State<ProfileSidebar> {
     'Reports': false,
     'Masters': false,
     'Miscellaneous': false,
-  };
+  };  
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class _ProfileSidebarState extends State<ProfileSidebar> {
                 decoration: BoxDecoration(
                   color: Colors.blue,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(36.0),
-                    bottomLeft: Radius.circular(36.0),
+                    topLeft: Radius.circular(10.0),
+                    bottomLeft: Radius.circular(10.0),
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -137,13 +137,7 @@ class _ProfileSidebarState extends State<ProfileSidebar> {
                               icon: Icons.vpn_key,
                               label: 'KYC Details',
                               onTap: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         const AadharCardKYCPage(),
-                                //   ),
-                                // );
+                            
                               },
                             ),
 

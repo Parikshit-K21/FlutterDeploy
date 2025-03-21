@@ -30,13 +30,13 @@ class LoginService {
   final http.Client client;
 
   LoginService({
-    this.baseUrl = 'http://localhost:5071',
+    this.baseUrl = 'https://qa.birlawhite.com:55232',
     http.Client? client,
   }) : client = client ?? http.Client();
 
   // Dispose to prevent memory leaks
   void dispose() {
-    client.close();
+    client.close(); 
   }
 
   // Login with email and password

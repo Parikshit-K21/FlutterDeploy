@@ -412,9 +412,9 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
             });
           }),
           _buildDropdownField('District*', _areas ?? [], District),
-          _buildClickableOptions('Register With PAN/GST*', ['GST', 'PAN']),
-          _buildTextField('GST Number*', GST),
-          _buildTextField('PAN Number*', PAN),
+           _buildClickableOptions('Register With PAN/GST*', ['GST', 'PAN']),
+          _buildTextFieldTick('GST Number*', GST),
+          _buildTextFieldTick('PAN Number*', PAN),
           _buildTextField('Firm Name', TextEditingController()),
           _buildTextField('Mobile*', Mobile, inputFormatters: [
             FilteringTextInputFormatter.digitsOnly, // Allow only digits
@@ -550,44 +550,83 @@ class _RetailerRegistrationPageState extends State<RetailerRegistrationPage> {
     );
   }
 
-  Widget _buildClickableOptions(String label, List<String> options) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 14)),
-        const SizedBox(height: 2.0),
-        Wrap(
-          spacing: 8.0, // Adjust spacing between chips if needed
-          runSpacing: 8.0, // Adjust spacing between rows if needed
-          children: options.map((option) {
-            final isSelected = _selectedOption == option;
-            return ChoiceChip(
-              label: Text(option),
-              selected: isSelected,
-              onSelected: (selected) {
+  String? selectedOption; // To track the selected option
+
+Widget _buildClickableOptions(String label, List<String> options) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label),
+      const SizedBox(height: 8),
+      Row(
+        children: options.map((option) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: InkWell(
+              onTap: () {
                 setState(() {
-                  _selectedOption = selected ? option : null;
+                  selectedOption = option;
                 });
               },
-              labelStyle: const TextStyle(color: Colors.white),
-              backgroundColor: const Color.fromRGBO(0, 112, 183, 1),
-              selectedColor: const Color.fromRGBO(0, 112, 183, 1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0), // Circular shape
-                side: BorderSide(
-                  color: isSelected
-                      ? Colors.white
-                      : Colors.transparent, // Optional border
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  
+                  border: Border.all(
+                    color: selectedOption == option
+                        ? Colors.blue
+                        : Colors.grey,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  color: selectedOption == option
+                      ? Colors.blue
+                      : Colors.transparent,
+                ),
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    color: selectedOption == option
+                        ? Colors.black
+                        : Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 16.0),
-      ],
-    );
+            ),
+          );
+        }).toList(),
+      ),
+    ],
+  );
+}
+
+Widget _buildTextFieldTick(String label, TextEditingController controller) {
+  bool isEnabled = false;
+  
+  // Enable the appropriate field based on selection
+  if (label.contains('GST')) {
+    isEnabled = selectedOption == 'GST';
+  } else if (label.contains('PAN')) {
+    isEnabled = selectedOption == 'PAN';
   }
 
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: TextField(
+      controller: controller,
+      enabled: isEnabled,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        filled: !isEnabled,
+        fillColor: !isEnabled ? Colors.grey[200] : Colors.transparent,
+      ),
+    ),
+  );
+}
   Widget _buildUploadField(String label) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

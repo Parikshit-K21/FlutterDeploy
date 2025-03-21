@@ -1,7 +1,7 @@
 import 'package:bw_sparsh/Screens/homePAge/homePage.dart';
 import 'package:flutter/material.dart';
 
-import '../Logic/search.dart';
+import 'search.dart';
 import 'app_links.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -27,14 +27,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
       height: appBarHeight,
       decoration: BoxDecoration(
         color: Colors.white,
-        // gradient: LinearGradient(
-        //   colors: [
-        //     Colors.blue[800]!,
-        //     Colors.blueAccent,
-        //   ],
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        // ),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -104,32 +96,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     });
                   },
                 ),
-
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 2),
-                //   child: IconButton(
-                //     iconSize: 30,
-                //     icon: const CircleAvatar(
-                //       radius: 20,
-                //       backgroundImage: AssetImage('assets/profile_image.png'),
-                //     ),
-                //     onPressed: () {
-                //       final isMobile = Theme.of(context).platform ==
-                //               TargetPlatform.iOS ||
-                //           Theme.of(context).platform == TargetPlatform.android;
-
-                //       if (isMobile) {
-                //         Scaffold.of(context).openEndDrawer();
-                //       } else {
-                //         Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => const ProfilePage()),
-                //         );
-                //       }
-                //     },
-                //   ),
-                // ),
               ],
             ),
             if (isSearchActive)

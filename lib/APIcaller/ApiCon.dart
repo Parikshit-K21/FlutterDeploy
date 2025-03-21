@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 
 
 class ApiService {
-  static const String baseUrl = "http://localhost:5071/api/Control";
+  static const String baseUrl = "https://qa.birlawhite.com:55232/api/Control";
+  // qa.birlawhite.com:55232/api/Control
 
   Future<List<dynamic>> getAll() async {
     final response = await http.get(Uri.parse(baseUrl));

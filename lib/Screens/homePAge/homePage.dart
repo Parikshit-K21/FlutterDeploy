@@ -44,6 +44,7 @@ class HomeBase extends StatelessWidget {
         children: [
           // Main content
           SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               

@@ -100,6 +100,8 @@ class AppTheme {
   final String? fontFamily;
 
   final BordRadius radius;
+  
+  final dynamic margin;
 
   const AppTheme({
     // Default primary blue color as shown in the example
@@ -150,6 +152,9 @@ class AppTheme {
     
     // Font family
     this.fontFamily = 'Poppins',
+
+    //margins
+    this.margin = const EdgeInsets.symmetric(horizontal: 8.0),
     
     // Radius
     this.radius = const BordRadius(),

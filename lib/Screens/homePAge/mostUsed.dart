@@ -1,3 +1,4 @@
+import 'package:bw_sparsh/Screens/dsr_Visit.dart';
 import 'package:flutter/material.dart';
 
 class MostlyUsedApps extends StatelessWidget {
@@ -36,7 +37,7 @@ child: Column(
             spacing: 10.0, // Space between widgets in the row
             runSpacing: 10.0, // Space between rows
             children: apps.map((app) {
-              return _buildAppItem(app);
+              return _buildAppItem(app,context);
             }).toList(),
           ),
         ],
@@ -45,8 +46,17 @@ child: Column(
     );
   }
 
-  Widget _buildAppItem(Map<String, dynamic> app) {
-    return SizedBox(
+  Widget _buildAppItem(Map<String, dynamic> app, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if(app['name']=="DSR"){
+          Navigator.push(context, 
+          MaterialPageRoute(builder: (context) => DSR()));
+        }
+      },
+      child: 
+    
+    SizedBox(
       width: 80.0, // Adjust width as needed
       child: Column(
         children: [
@@ -73,6 +83,7 @@ child: Column(
           ),
         ],
       ),
+    )
     );
   }
 }
