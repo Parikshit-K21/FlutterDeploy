@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import '../../Reports/salesDashboard.dart';
 import '../../universal.dart';
 
-
-
 class HomeTabs extends StatefulWidget {
   const HomeTabs({super.key});
 
@@ -16,7 +14,12 @@ class HomeTabs extends StatefulWidget {
 
 class _HomeTabsState extends State<HomeTabs> {
   int _selectedTabIndex = 0;
-  final List<String> _tabTitles = ['Quick Menu', 'Dashboard', 'Document', 'Trending'];
+  final List<String> _tabTitles = [
+    'Quick Menu',
+    'Dashboard',
+    'Document',
+    'Trending',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +48,10 @@ class _HomeTabsState extends State<HomeTabs> {
               child: Row(
                 children: List.generate(
                   _tabTitles.length,
-                  (index) => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.xsmall),
+                      (index) => Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: appTheme.spacing.xsmall,
+                    ),
                     child: ElevatedButton(
                       onPressed: () {
                         setState(() {
@@ -54,16 +59,21 @@ class _HomeTabsState extends State<HomeTabs> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _selectedTabIndex == index
+                        backgroundColor:
+                        _selectedTabIndex == index
                             ? appTheme.primaryColor
                             : appTheme.surfaceColor,
-                        foregroundColor: _selectedTabIndex == index
+                        foregroundColor:
+                        _selectedTabIndex == index
                             ? appTheme.onPrimaryColor
                             : appTheme.primaryColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(appTheme.buttonBorderRadius),
+                          borderRadius: BorderRadius.circular(
+                            appTheme.buttonBorderRadius,
+                          ),
                           side: BorderSide(
-                            color: _selectedTabIndex == index
+                            color:
+                            _selectedTabIndex == index
                                 ? appTheme.primaryColor
                                 : appTheme.neutralColor,
                           ),
@@ -273,9 +283,5 @@ class GridItem {
   final String title;
   final Color color;
 
-  GridItem({
-    required this.icon,
-    required this.title,
-    required this.color,
-  });
+  GridItem({required this.icon, required this.title, required this.color});
 }

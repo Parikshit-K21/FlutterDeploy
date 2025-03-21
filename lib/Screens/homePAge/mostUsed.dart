@@ -9,7 +9,7 @@ class MostlyUsedApps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-     
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -69,7 +69,8 @@ child: Column(
             child: Icon(
               app['icon'], // Icon data from the JSON
               size: 30.0,
-              color: Colors.blue[800], // Icon color as in the image
+              color: Colors.blue[800],
+              // Icon color as in the image
             ),
           ),
           SizedBox(height: 8.0),
